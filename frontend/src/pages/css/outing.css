@@ -1,0 +1,55 @@
+.outings-page {
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .outings-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .outings-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #555;
+  }
+  
+  .outings-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .outing-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 300px;
+    transition: transform 0.3s ease;
+  }
+  
+  .outing-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .outing-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .outing-title {
+    font-size: 1.5rem;
+    margin: 15px 0 10px;
+    color: #333;
+  }
+  
+  .outing-description {
+    font-size: 1rem;
+    color: #777;
+    padding: 0 15px 15px;
+  }

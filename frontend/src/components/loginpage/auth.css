@@ -1,0 +1,87 @@
+/* General Container */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+  }
+  
+  /* Authentication Box */
+  .auth-box {
+    width: 400px;
+    padding: 30px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  /* Form Heading */
+  .auth-box h2 {
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: #333;
+  }
+  
+  /* Form Groups */
+  .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .form-group input:focus {
+    border-color: #4caf50;
+  }
+  
+  /* Buttons */
+  .auth-button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .auth-button:hover {
+    background-color: #45a049;
+  }
+  
+  .auth-button:active {
+    transform: scale(0.98);
+  }
+  
+  /* Additional Links */
+  .auth-box p {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
+  .auth-box a {
+    color: #4caf50;
+    text-decoration: none;
+  }
+  
+  .auth-box a:hover {
+    text-decoration: underline;
+  }
