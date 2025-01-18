@@ -9,7 +9,7 @@ export const Navbar = () => {
 
   // Update the menu state based on the current route
   useEffect(() => {
-    const path = location.pathname.substring(1); // Remove leading "/"
+    const path = location.pathname.substring(1);
     setMenu(path || "home"); // Default to "home" if path is empty
   }, [location]);
 

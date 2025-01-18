@@ -2,7 +2,7 @@ import React from "react";
 import "./css/product.css";
 import { useParams } from "react-router-dom";
 import { treksData } from "./trekData";
-import { ProductDisplay } from "../components/productdisplay/ProductDisplay";
+import { ProductDisplay } from "../component/productdisplay/ProductDisplay";
 
 
 export const ProductPage = () => {
@@ -14,10 +14,10 @@ export const ProductPage = () => {
   }
 
   return (
-    <div className="product-page">
+
       <ProductDisplay product={product} />
       
     
-    </div>
+ 
   );
 };

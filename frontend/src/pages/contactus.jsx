@@ -8,6 +8,9 @@ const ContactUs = () => {
     phone: "",
   });
 
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -16,9 +19,50 @@ const ContactUs = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const { email, phone } = formData;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9]{10}$/;
+
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address.";
+    }
+    if (!phoneRegex.test(phone)) {
+      return "Please enter a valid 10-digit phone number.";
+    }
+    return null;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Thanks! We will call you shortly.");
+
+    // Validate form before submission
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      setError(null);
+      setMessage(null);
+
+      // Replace the URL below with your actual backend API endpoint
+      const response = await fetch("http://localhost:4000/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form. Please try again later.");
+      }
+
+      setMessage("Thanks! We will call you shortly.");
+      setFormData({ name: "", email: "", phone: "" });
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred.");
+    }
   };
 
   return (
@@ -28,10 +72,11 @@ const ContactUs = () => {
         {/* Form Section */}
         <form onSubmit={handleSubmit} className="contactus-form">
           <div className="form-group">
-            <label>Name:</label>
+            <label htmlFor="name">Name:</label>
             <input
               type="text"
               name="name"
+              id="name"
               value={formData.name}
               onChange={handleChange}
               required
@@ -39,10 +84,11 @@ const ContactUs = () => {
             />
           </div>
           <div className="form-group">
-            <label>Email:</label>
+            <label htmlFor="email">Email:</label>
             <input
               type="email"
               name="email"
+              id="email"
               value={formData.email}
               onChange={handleChange}
               required
@@ -50,16 +96,24 @@ const ContactUs = () => {
             />
           </div>
           <div className="form-group">
-            <label>Phone:</label>
+            <label htmlFor="phone">Phone:</label>
             <input
               type="tel"
               name="phone"
+              id="phone"
               value={formData.phone}
               onChange={handleChange}
               required
               placeholder="Enter your phone number"
             />
           </div>
+
+          {/* Error Message */}
+          {error && <p className="error-message">{error}</p>}
+
+          {/* Success Message */}
+          {message && <p className="success-message">{message}</p>}
+
           <button type="submit" className="submit-btn">
             Submit
           </button>

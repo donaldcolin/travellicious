@@ -5,35 +5,54 @@ import './Sidebar.css';
 const Sidebar = () => {
   return (
     <div className="sidebar">
-      {/* Sidebar Header with Logo and Company Name */}
+      {/* Sidebar Header with Logo and Brand */}
       <div className="sidebar-header">
-        <img 
-          src="/path-to-your-logo/logo.png" // Replace with the actual path to your logo
-          alt="Company Logo" 
-          className="sidebar-logo-img" 
-        />
-        <span className="sidebar-logo-text">Travellicious</span>
+        <div className="brand-container">
+          <img 
+            src="/logo.png" 
+            alt="Travellicious" 
+            className="brand-logo"
+          />
+          <h1 className="brand-name">Travellicious</h1>
+        </div>
       </div>
-      
-      {/* Sidebar Menu */}
-      <div className="sidebar-menu">
-        <ul>
-          <li>
-            <Link to="/addproduct" className="sidebar-link">
-              Add Product
+
+      {/* Navigation Menu */}
+      <nav className="sidebar-nav">
+        <ul className="nav-list">
+          <li className="nav-item">
+            <Link to="/addproduct" className="nav-link">
+              <i className="nav-icon">➕</i>
+              <span>Add Product</span>
             </Link>
           </li>
-          <li>
-            <Link to="/listproduct" className="sidebar-link">
-              List All Products
+          <li className="nav-item">
+            <Link to="/listproduct" className="nav-link">
+              <i className="nav-icon">📋</i>
+              <span>List of Products</span>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/contact" className="nav-link">
+              <i className="nav-icon">📞</i>
+              <span>Contacted Us</span>
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/buy" className="nav-link">
+              <i className="nav-icon">🛍️</i>
+              <span>Bought</span>
             </Link>
           </li>
         </ul>
-      </div>
+      </nav>
 
-      {/* Profile Button */}
-      <div className="sidebar-profile">
-        <button className="profile-btn">Profile</button>
+      {/* Profile Section */}
+      <div className="sidebar-footer">
+        <button className="profile-button">
+          <i className="profile-icon">👤</i>
+          <span>Profile</span>
+        </button>
       </div>
     </div>
   );

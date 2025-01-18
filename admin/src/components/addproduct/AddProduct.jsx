@@ -1,5 +1,14 @@
-import React, { useState } from "react";
-import "./AddProduct.css";
+import React from 'react';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -7,6 +16,8 @@ const AddProduct = () => {
     category: "Trek",
     location: "",
     distanceFromBangalore: "",
+    nextdate: new Date(), // Single date
+    availabledates: [], // Array of dates
     duration: "",
     description: "",
     bigDescription: "",
@@ -30,43 +41,34 @@ const AddProduct = () => {
 
     if (name.startsWith("services.")) {
       const serviceKey = name.split(".")[1];
-      setFormData((prevData) => ({
-        ...prevData,
-        services: {
-          ...prevData.services,
-          [serviceKey]: value,
-        },
+      setFormData(prev => ({
+        ...prev,
+        services: { ...prev.services, [serviceKey]: value },
       }));
     } else if (name.startsWith("price.")) {
       const priceKey = name.split(".")[1];
-      setFormData((prevData) => ({
-        ...prevData,
-        price: {
-          ...prevData.price,
-          [priceKey]: value,
-        },
+      setFormData(prev => ({
+        ...prev,
+        price: { ...prev.price, [priceKey]: value },
       }));
     } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const handleAttractionsChange = (index, value) => {
     const updatedAttractions = [...formData.attractions];
     updatedAttractions[index] = value;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData(prev => ({
+      ...prev,
       attractions: updatedAttractions,
     }));
   };
 
   const addAttractionField = () => {
-    setFormData((prevData) => ({
-      ...prevData,
-      attractions: [...prevData.attractions, ""],
+    setFormData(prev => ({
+      ...prev,
+      attractions: [...prev.attractions, ""],
     }));
   };
 
@@ -76,9 +78,9 @@ const AddProduct = () => {
       return;
     }
     const filesArray = Array.from(e.target.files);
-    setFormData((prevData) => ({
-      ...prevData,
-      images: [...prevData.images, ...filesArray],
+    setFormData(prev => ({
+      ...prev,
+      images: [...prev.images, ...filesArray],
     }));
   };
 
@@ -110,11 +112,14 @@ const AddProduct = () => {
         const addProductData = await addProductResponse.json();
         if (addProductData.success) {
           alert("Product added successfully");
+          // Reset form
           setFormData({
             name: "",
             category: "Trek",
             location: "",
             distanceFromBangalore: "",
+            nextdate: new Date(),
+            availabledates: [],
             duration: "",
             description: "",
             bigDescription: "",
@@ -150,212 +155,221 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="add-product-container">
-      <h1>Add Product</h1>
-      <form className="add-product-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Enter product name"
-            required
-          />
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      <Card className="w-full max-w-3xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Add Product</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Name</label>
+                <Input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter product name"
+                  required
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Category</label>
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
-            <option value="Trek">Trek</option>
-            <option value="Outing">Outing</option>
-          </select>
-        </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Category</label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Trek">Trek</SelectItem>
+                    <SelectItem value="Outing">Outing</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="form-group">
-          <label>Location</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Enter location"
-            required
-          />
-        </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Next Available Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start text-left">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.nextdate ? format(formData.nextdate, "PPP") : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.nextdate}
+                      onSelect={(date) => setFormData(prev => ({ ...prev, nextdate: date }))}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
 
-        <div className="form-group">
-          <label>Distance From Bangalore</label>
-          <input
-            type="text"
-            name="distanceFromBangalore"
-            value={formData.distanceFromBangalore}
-            onChange={handleChange}
-            placeholder="Enter distance"
-            required
-          />
-        </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Available Dates</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start text-left">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.availabledates.length > 0 
+                        ? `${formData.availabledates.length} dates selected`
+                        : "Select dates"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="multiple"
+                      selected={formData.availabledates}
+                      onSelect={(dates) => setFormData(prev => ({ ...prev, availabledates: dates }))}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
 
-        <div className="form-group">
-          <label>Duration</label>
-          <input
-            type="text"
-            name="duration"
-            value={formData.duration}
-            onChange={handleChange}
-            placeholder="Enter duration"
-            required
-          />
-        </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Location</label>
+                <Input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  placeholder="Enter location"
+                  required
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Enter description"
-            required
-          />
-        </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Distance From Bangalore</label>
+                <Input
+                  type="text"
+                  name="distanceFromBangalore"
+                  value={formData.distanceFromBangalore}
+                  onChange={handleChange}
+                  placeholder="Enter distance"
+                  required
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Big Description</label>
-          <textarea
-            name="bigDescription"
-            value={formData.bigDescription}
-            onChange={handleChange}
-            placeholder="Enter detailed description"
-          />
-        </div>
+              <div>
+  <label className="block text-sm font-medium mb-1">Duration</label>
+  <Input
+    type="text"
+    name="duration"
+    value={formData.duration}
+    onChange={handleChange}
+    placeholder="Enter duration"
+    required
+  />
+</div>
 
-        <div className="form-group">
-          <label>Attractions</label>
-          {formData.attractions.map((attraction, index) => (
-            <div key={index} className="attraction-field">
-              <input
-                type="text"
-                value={attraction}
-                onChange={(e) => handleAttractionsChange(index, e.target.value)}
-                placeholder="Enter an attraction"
-              />
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <Textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Enter description"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Detailed Description</label>
+                <Textarea
+                  name="bigDescription"
+                  value={formData.bigDescription}
+                  onChange={handleChange}
+                  placeholder="Enter detailed description"
+                  className="h-32"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Attractions</label>
+                <div className="space-y-2">
+                  {formData.attractions.map((attraction, index) => (
+                    <Input
+                      key={index}
+                      type="text"
+                      value={attraction}
+                      onChange={(e) => handleAttractionsChange(index, e.target.value)}
+                      placeholder="Enter an attraction"
+                    />
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={addAttractionField}
+                    className="w-full"
+                  >
+                    Add Attraction
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Images</label>
+                <Input
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  className="cursor-pointer"
+                />
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Services</h3>
+                {Object.entries(formData.services).map(([key, value]) => (
+                  <div key={key}>
+                    <label className="block text-sm font-medium mb-1 capitalize">
+                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                    </label>
+                    <Input
+                      type="text"
+                      name={`services.${key}`}
+                      value={value}
+                      onChange={handleChange}
+                      placeholder={`Enter ${key.toLowerCase().replace(/([A-Z])/g, ' $1').trim()}`}
+                      required
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Price</h3>
+                {Object.entries(formData.price).map(([key, value]) => (
+                  <div key={key}>
+                    <label className="block text-sm font-medium mb-1 capitalize">
+                      {key} Price
+                    </label>
+                    <Input
+                      type="number"
+                      name={`price.${key}`}
+                      value={value}
+                      onChange={handleChange}
+                      placeholder={`Enter ${key} price`}
+                      required
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-          <button
-            type="button"
-            className="add-field-btn"
-            onClick={addAttractionField}
-          >
-            + Add Attraction
-          </button>
-        </div>
 
-        <div className="form-group">
-          <label>Images</label>
-          <input
-            type="file"
-            multiple
-            onChange={handleFileChange}
-            accept="image/*"
-          />
-        </div>
-
-        <h3>Services</h3>
-        <div className="form-group">
-          <label>Meals</label>
-          <input
-            type="text"
-            name="services.meals"
-            value={formData.services.meals}
-            onChange={handleChange}
-            placeholder="Enter meal details"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Return Timing</label>
-          <input
-            type="text"
-            name="services.returnTiming"
-            value={formData.services.returnTiming}
-            onChange={handleChange}
-            placeholder="Enter return timing"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Group Size</label>
-          <input
-            type="text"
-            name="services.groupSize"
-            value={formData.services.groupSize}
-            onChange={handleChange}
-            placeholder="Enter group size"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Transport</label>
-          <input
-            type="text"
-            name="services.transport"
-            value={formData.services.transport}
-            onChange={handleChange}
-            placeholder="Enter transport details"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Pickup and Drop</label>
-          <input
-            type="text"
-            name="services.pickupDrop"
-            value={formData.services.pickupDrop}
-            onChange={handleChange}
-            placeholder="Enter pickup/drop details"
-            required
-          />
-        </div>
-
-        <h3>Price</h3>
-        <div className="form-group">
-          <label>Single Price</label>
-          <input
-            type="number"
-            name="price.single"
-            value={formData.price.single}
-            onChange={handleChange}
-            placeholder="Enter single price"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Package Price</label>
-          <input
-            type="number"
-            name="price.package"
-            value={formData.price.package}
-            onChange={handleChange}
-            placeholder="Enter package price"
-            required
-          />
-        </div>
-
-        <button type="submit" className="submit-btn">
-          Add Product
-        </button>
-      </form>
+            <Button type="submit" className="w-full">
+              Add Product
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

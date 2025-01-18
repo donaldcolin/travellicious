@@ -151,3 +151,52 @@
     text-align: center;
   }
 }
+.stats-section {
+  padding: 60px 0;
+  margin: 40px 0;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 20px;
+}
+
+.stat-item h3 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.stat-item p {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 0;
+}
+
+/* FAQ Section Styles */
+.faq-section {
+  margin: 60px 0;
+}
+
+.faq-section h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Responsive Design Updates */
+@media (max-width: 768px) {
+  .stats-container {
+    flex-direction: column;
+    gap: 40px;
+  }
+}

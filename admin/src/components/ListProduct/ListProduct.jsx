@@ -1,12 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ListProduct.css'
+import { useNavigate } from 'react-router-dom';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 
 const ListProduct = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Fetch all products from the API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -22,44 +51,106 @@ const ListProduct = () => {
     fetchProducts();
   }, []);
 
-  // Handle product removal
-  const handleRemove = async (id) => {
+  const handleRemove = async () => {
     try {
-      await axios.post('http://localhost:4000/removeproduct', { id });
-      setProducts(products.filter(product => product.id !== id));
+      await axios.post('http://localhost:4000/removeproduct', { id: deleteId });
+      setProducts(products.filter(product => product.id !== deleteId));
+      setIsDeleteDialogOpen(false);
+      setDeleteId(null);
     } catch (error) {
       console.error('Error removing product:', error);
     }
   };
 
-  // Handle product edit (Here you can create a modal or a separate edit page)
   const handleEdit = (id) => {
-    // Redirect to the edit page with the product ID
-    window.location.href = `/editproduct/${id}`;
+    navigate(`/editproduct/${id}`);
   };
 
+  const openDeleteDialog = (id) => {
+    setDeleteId(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-2rem)] ml-[280px] p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+      </div>
+    );
+  }
+
   return (
-    <div className="product-list-container">
-      <h1>Product List</h1>
-      {loading ? (
-        <p>Loading products...</p>
-      ) : (
-        <div className="product-list">
-          {products.map((product) => (
-            <div key={product.id} className="product-item">
-              <div className="product-info">
-                <p><strong>Name:</strong> {product.name}</p>
-                <p><strong>Category:</strong> {product.category}</p>
-                <p><strong>Location:</strong> {product.location}</p>
-              </div>
-              <div className="product-actions">
-                <button onClick={() => handleEdit(product.id)}>Edit</button>
-                <button onClick={() => handleRemove(product.id)}>Remove</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="ml-[280px] p-8"> {/* Added margin-left to prevent sidebar overlap */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Products</h1>
+      </div>
+
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {products.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell>{product.category}</TableCell>
+                <TableCell>{product.location}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => handleEdit(product.id)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={() => openDeleteDialog(product.id)}
+                      >
+                        <Trash className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Separate AlertDialog from the table */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this product? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRemove}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

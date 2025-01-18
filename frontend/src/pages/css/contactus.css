@@ -82,3 +82,11 @@ h1 {
   border-radius: 8px;
   width: 100%;
 }
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+.success-message {
+  color: green;
+  margin-top: 10px;
+}

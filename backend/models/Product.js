@@ -6,6 +6,8 @@ const productSchema = new mongoose.Schema({
   category: { type: String, required: true },
   location: { type: String, required: true },
   distanceFromBangalore: { type: String, required: true },
+  nextdate:{type:Date,required:true},
+  availabledates:[{type:Date,required:true}],
   duration: { type: String, required: true },
   description: { type: String, required: true },
   bigDescription: { type: String },

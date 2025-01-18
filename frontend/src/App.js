@@ -1,16 +1,16 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { Navbar } from "./components/navbar/navbar";
-import { Footer } from "./components/footer/footer";
-import { Hero } from "./components/hero/hero";
-import { Newsletter } from "./components/newsletter/newsletter";
+import { Navbar } from "./component/navbar/navbar";
+import { Footer } from "./component/footer/footer";
+import { Hero } from "./component/hero/hero";
+import { Newsletter } from "./component/newsletter/newsletter";
 
 // Pages
 import ContactUs from "./pages/contactus";
 import { Treks } from "./pages/treks";
 import { ProductPage } from "./pages/product";
 import { AboutUs } from "./pages/aboutus";
-import { Login } from "./components/loginpage/login";
+import { Login } from "./component/loginpage/login";
 import { Gallery } from "./pages/gallery";
 import { Outings } from "./pages/outings";
 

@@ -4,7 +4,6 @@ import Admin from './pages/admin/admin'
 const App = () => {
   return (
     <div>
-
      <Admin/>
     </div>
   )

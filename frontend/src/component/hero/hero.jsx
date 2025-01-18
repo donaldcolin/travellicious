@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import "./hero.css";
-import Trek from "/Users/donaldcolin/travelicious/frontend/src/components/assets/trek.jpeg";
+import Trek from "/Users/donaldcolin/travelicious/frontend/src/component/assets/trek.jpeg";
+import {Instagram, Facebook,Youtube} from 'lucide-react';
 
-export const Hero = () => {
+ export const Hero = () => {
   const handleScrollToTreks = () => {
     const trekSection = document.getElementById("treks-section");
     if (trekSection) {
@@ -22,22 +23,24 @@ export const Hero = () => {
       {/* Translucent Overlay */}
       <div className="hero-overlay"></div>
 
+      {/* Social Media Icons */}
+      <div className="social-icons">
+        <a href="#" className="social-icon">
+          <Instagram className="w-6 h-6 hover:scale-125 transition-transform" />
+        </a>
+        <a href="#" className="social-icon">
+          <Facebook className="w-6 h-6 hover:scale-125 transition-transform" />
+        </a>
+        <a href="#" className="social-icon">
+          <Youtube className="w-6 h-6 hover:scale-125 transition-transform" />
+        </a>
+      </div>
+
       {/* Hero Content */}
       <div className="hero-content">
         <h1 className="hero-title">Welcome to Travellicious</h1>
         <p className="hero-subtitle">
           Discover amazing destinations and unforgettable experiences.
-        </p>
-
-        <p className="hero-subtitle">
-      insta 
-        </p>
-        <p className="hero-subtitle">
-   fb
-        </p>
-        <p className="hero-subtitle">
-   youtube
-   
         </p>
         
         {/* Buttons */}
@@ -53,3 +56,4 @@ export const Hero = () => {
     </div>
   );
 };
+

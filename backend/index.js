@@ -4,6 +4,8 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const productRoutes = require("./routes/ProductRoutes");
+const outingRoutes = require("./routes/Outingroutes")
+const contactRoutes =require("./routes/ContactRoutes")
 
 const app = express();
 const port = 4000;
@@ -42,8 +44,12 @@ app.post("/upload", upload, (req, res) => {
   res.json({ success: 1, image_urls: imageUrls });
 });
 
+
 // Routes
 app.use("/", productRoutes);
+app.use("/",outingRoutes);
+app.use("/",contactRoutes)
+
 
 // Start server
 app.listen(port, () => {
