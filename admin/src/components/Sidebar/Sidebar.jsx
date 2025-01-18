@@ -23,15 +23,28 @@ const Sidebar = () => {
           <li className="nav-item">
             <Link to="/addproduct" className="nav-link">
               <i className="nav-icon">➕</i>
-              <span>Add Product</span>
+              <span>Add Treks</span>
             </Link>
           </li>
           <li className="nav-item">
             <Link to="/listproduct" className="nav-link">
               <i className="nav-icon">📋</i>
-              <span>List of Products</span>
+              <span>List of Treks</span>
             </Link>
           </li>
+          <li className="nav-item">
+            <Link to="/addouting" className="nav-link">
+              <i className="nav-icon">➕</i>
+              <span>Add Outing</span>
+            </Link>
+            </li>
+
+            <li className="nav-item">
+            <Link to="/listouting" className="nav-link">
+              <i className="nav-icon">➕</i>
+              <span> list of outings</span>
+            </Link>
+            </li>
           <li className="nav-item">
             <Link to="/contact" className="nav-link">
               <i className="nav-icon">📞</i>

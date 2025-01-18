@@ -29,43 +29,47 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 
-const ListOuting = () => {
-  const [products, setProducts] = useState([]);
+const ListOutings = () => {
+  const [outings, setOutings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Fetch outings from the backend
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchOutings = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/allproducts');
-        setProducts(response.data);
+        const response = await axios.get('http://localhost:4000/allOutings');
+        setOutings(response.data); // Assuming the API returns an array of outings
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching outings:', error);
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchOutings();
   }, []);
 
+  // Handle outing removal
   const handleRemove = async () => {
     try {
-      await axios.post('http://localhost:4000/removeproduct', { id: deleteId });
-      setProducts(products.filter(product => product.id !== deleteId));
+      await axios.post('http://localhost:4000/removeouting', { id: deleteId });
+      setOutings(outings.filter(outing => outing.id !== deleteId));
       setIsDeleteDialogOpen(false);
       setDeleteId(null);
     } catch (error) {
-      console.error('Error removing product:', error);
+      console.error('Error removing outing:', error);
     }
   };
 
+  // Navigate to edit outing page
   const handleEdit = (id) => {
-    navigate(`/editproduct/${id}`);
+    navigate(`/updateouting/${id}`);
   };
 
+  // Open delete confirmation dialog
   const openDeleteDialog = (id) => {
     setDeleteId(id);
     setIsDeleteDialogOpen(true);
@@ -80,11 +84,13 @@ const ListOuting = () => {
   }
 
   return (
-    <div className="ml-[280px] p-8"> {/* Added margin-left to prevent sidebar overlap */}
+    <div className="ml-[280px] p-8">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Products</h1>
+        <h1 className="text-3xl font-bold">Outings</h1>
       </div>
 
+      {/* Outings Table */}
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
@@ -92,15 +98,21 @@ const ListOuting = () => {
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Location</TableHead>
+              <TableHead>Next Available Date</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>{product.location}</TableCell>
+            {outings.map((outing) => (
+              <TableRow key={outing.id}>
+                <TableCell className="font-medium">{outing.name}</TableCell>
+                <TableCell>{outing.category}</TableCell>
+                <TableCell>{outing.location}</TableCell>
+                <TableCell>
+                  {outing.nextdate
+                    ? new Date(outing.nextdate).toLocaleDateString()
+                    : "N/A"}
+                </TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -109,13 +121,13 @@ const ListOuting = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEdit(product.id)}>
+                      <DropdownMenuItem onClick={() => handleEdit(outing.id)}>
                         <Pencil className="mr-2 h-4 w-4" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         className="text-red-600"
-                        onClick={() => openDeleteDialog(product.id)}
+                        onClick={() => openDeleteDialog(outing.id)}
                       >
                         <Trash className="mr-2 h-4 w-4" />
                         Delete
@@ -129,13 +141,13 @@ const ListOuting = () => {
         </Table>
       </div>
 
-      {/* Separate AlertDialog from the table */}
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+            <AlertDialogTitle>Delete Outing</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this product? This action cannot be undone.
+              Are you sure you want to delete this outing? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -155,4 +167,4 @@ const ListOuting = () => {
   );
 };
 
-export default ListOuting;
+export default ListOutings;
