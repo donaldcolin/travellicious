@@ -88,7 +88,7 @@ router.put("/updatecontact/:id", async (req, res) => {
 });
 
 // DELETE: Remove a contact
-router.delete("/removecontact/:id", async (req, res) => {
+router.post("/removecontact", async (req, res) => {
   const { id } = req.params;
 
   try {

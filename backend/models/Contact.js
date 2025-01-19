@@ -20,7 +20,7 @@ const contactSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "done", "overtime"], // Restricted to these values
+    enum: ["pending", "contacted", "resolved"], // Restricted to these values
     default: "pending", // Default value is 'pending'
   },
   createdAt: {

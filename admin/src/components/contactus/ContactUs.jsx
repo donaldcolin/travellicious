@@ -32,7 +32,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Copy, Trash2, Mail, Phone, Check } from "lucide-react";
+import { Loader2, Copy, Trash2, Mail, Phone, Check, Calendar } from "lucide-react";
 import { useToast } from "/src/hooks/use-toast.js";
 
 const ContactList = () => {
@@ -41,6 +41,22 @@ const ContactList = () => {
   const [error, setError] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
   const { toast } = useToast();
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return "N/A";
+    }
+  };
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -83,7 +99,7 @@ const ContactList = () => {
 
   const handleStatusChange = async (_id, newStatus) => {
     try {
-      const response = await fetch("http://localhost:4000/updatestatus", {
+      const response = await fetch("http://localhost:4000/updatecontact", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,102 +198,115 @@ const ContactList = () => {
   };
 
   return (
-    <div className="ml-[280px] p-8"> {/* Added margin-left to prevent sidebar overlap */}
-    <div className="flex justify-between items-center mb-6">
-      <h1 className="text-3xl font-bold">Contacted</h1>
-    </div>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[200px]">Name</TableHead>
-                  <TableHead className="min-w-[300px]">Contact Info</TableHead>
-                  <TableHead className="min-w-[250px]">Status</TableHead>
-                  <TableHead className="w-[100px] text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {contacts.map((contact) => (
-                  <TableRow key={contact._id}>
-                    <TableCell className="font-medium">{contact.name}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
-                          <span className="text-sm truncate">{contact.email}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
-                          <span className="text-sm">{contact.phone}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleCopy(contact.phone, contact._id)}
-                            className="h-6 w-6 p-0 ml-auto shrink-0"
-                          >
-                            {copiedId === contact._id ? (
-                              <Check className="h-4 w-4 text-green-500" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(contact.status)}`}>
-                          {contact.status || 'Pending'}
-                        </div>
-                        <Select
-                          value={contact.status || 'Pending'}
-                          onValueChange={(value) => handleStatusChange(contact._id, value)}
+    <div className="ml-[280px] p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Contacted</h1>
+      </div>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[200px]">Name</TableHead>
+              <TableHead className="min-w-[300px]">Contact Info</TableHead>
+              <TableHead className="min-w-[200px]">Date</TableHead>
+              <TableHead className="min-w-[250px]">Status</TableHead>
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {contacts.map((contact) => (
+              <TableRow key={contact._id}>
+                <TableCell className="font-medium">
+                  {contact.name || "N/A"}
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span className="text-sm truncate">{contact.email || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      <span className="text-sm">{contact.phone || "N/A"}</span>
+                      {contact.phone && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleCopy(contact.phone, contact._id)}
+                          className="h-6 w-6 p-0 ml-auto shrink-0"
                         >
-                          <SelectTrigger className="w-[130px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Pending">Pending</SelectItem>
-                            <SelectItem value="Contacted">Contacted</SelectItem>
-                            <SelectItem value="Resolved">Resolved</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0"
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Remove Contact</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to remove this contact? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleRemove(contact._id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Remove
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-</div>)}
-export default ContactList;
+                          {copiedId === contact._id ? (
+                            <Check className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <Copy className="h-4 w-4" />
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <span className="text-sm">{formatDate(contact.date)}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(contact.status)}`}>
+                      {contact.status || 'Pending'}
+                    </div>
+                    <Select
+                      value={contact.status || 'Pending'}
+                      onValueChange={(value) => handleStatusChange(contact._id, value)}
+                    >
+                      <SelectTrigger className="w-[130px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                        <SelectItem value="Contacted">Contacted</SelectItem>
+                        <SelectItem value="Resolved">Resolved</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Remove Contact</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to remove this contact? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleRemove(contact._id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Remove
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+};
+ 
