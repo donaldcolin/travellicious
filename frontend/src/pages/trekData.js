@@ -13,10 +13,10 @@ export const treksData = [
       This trek combines natural beauty with spiritual significance, as it is home to ancient temples and a rich history. 
       Ideal for both beginners and experienced trekkers, Savandurga is a must-visit for those seeking adventure near Bengaluru.`,
     images: [
-      "https://placehold.co/600x400",
-      "https://placehold.co/600x400",
-      "https://placehold.co/600x400",
-      "https://placehold.co/600x400",
+      "https://placehold.co/600x600",
+      "https://placehold.co/600x300",
+      "https://placehold.co/600x200",
+      "https://placehold.co/600x700",
     ],
     attractions: [
       "Largest monolith in Asia",

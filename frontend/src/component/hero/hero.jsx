@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import "./hero.css";
 import Trek from "/Users/donaldcolin/travelicious/frontend/src/component/assets/trek.jpeg";
-import {Instagram, Facebook,Youtube} from 'lucide-react';
+import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 
  export const Hero = () => {
   const handleScrollToTreks = () => {
