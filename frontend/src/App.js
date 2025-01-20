@@ -4,7 +4,8 @@ import { Navbar } from "./component/navbar/navbar";
 import { Footer } from "./component/footer/footer";
 import { Hero } from "./component/hero/hero";
 import { Newsletter } from "./component/newsletter/newsletter";
-
+import Preloader from "./component/preloader/preloader";
+import React from "react";
 // Pages
 import ContactUs from "./pages/contactus";
 import { Treks } from "./pages/treks";
@@ -44,15 +45,30 @@ const AppContent = () => {
   );
 };
 
-// Main App Component
+// Main App Component with Preloader
 function App() {
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Simulate loading time or wait for actual resources to load
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust the timeout as needed
+
+    return () => clearTimeout(timer); // Clean up the timer
+  }, []);
+
   return (
     <div>
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
+      {loading ? (
+        <Preloader /> // Show the preloader while loading
+      ) : (
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      )}
     </div>
   );
 }
 
- export default App;
+export default App;

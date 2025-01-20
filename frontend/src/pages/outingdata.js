@@ -1,6 +1,6 @@
 export const outingData = [
     {
-      id: 1,
+      id: 7,
       name: "ABS Resort",
       location: "Savandurga, near Bangalore",
       nextdate: "12/25/23",
@@ -43,7 +43,7 @@ export const outingData = [
       },
     },
     {
-      id: 2,
+      id: 8,
       name: "Channarayana Durga Resort",
       category: "Resort Tour",
       location: "Channarayana Durga, near Bangalore",

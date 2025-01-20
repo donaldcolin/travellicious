@@ -1,89 +1,59 @@
 import React from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card.tsx";
-import { Button } from "../components/ui/button";
-import { Calendar, Clock, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Card, CardHeader } from "../components/ui/card.tsx";
+import { MapPin } from "lucide-react";
+import { outingData } from "./outingdata.js";
 
 export const Outings = () => {
-  // Using the data from outingData, but with a safety check
-  const outings =  [
-    {
-      id: 1,
-      title: "Mountain Hiking Adventure",
-      description: "Experience breathtaking views on this guided mountain trek",
-      image: "/api/placeholder/400/300",
-      date: "2025-02-15",
-      duration: "6 hours",
-      location: "Rocky Mountains"
-    },
-    {
-      id: 2,
-      title: "Beach Sunset Tour",
-      description: "Enjoy a relaxing evening walk along the coastline",
-      image: "/api/placeholder/400/300",
-      date: "2025-02-20",
-      duration: "3 hours",
-      location: "Coastal Beach"
-    },
-    {
-      id: 3,
-      title: "Beach Sunset Tour",
-      description: "Enjoy a relaxing evening walk along the coastline",
-      image: "/api/placeholder/400/300",
-      date: "2025-02-20",
-      duration: "3 hours",
-      location: "Coastal Beach"
-    }
-  ];
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">
-          Discover Amazing Outings
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Explore exciting adventures and create unforgettable memories with our carefully curated collection of outings.
-        </p>
-      </div>
+    <div id="treks-section" className="bg-gray-50 min-h-screen py-8 sm:py-12">
+      <div className="container mx-auto px-4">
+        {/* Section Header */}
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3 sm:mb-4">
+            Explore Adventures Near Bangalore
+          </h1>
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            Discover breathtaking trails and memorable experiences within easy reach of the city
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {outings.map((outing) => (
-          <Card key={outing.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-            <div className="relative h-48 overflow-hidden">
-              <img
-                src={outing.image}
-                alt={outing.title}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              />
-            </div>
-            
-            <CardHeader>
-              <CardTitle className="text-xl">{outing.title}</CardTitle>
-              <CardDescription>{outing.description}</CardDescription>
-            </CardHeader>
+        {/* Responsive Treks Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          {outingData.map((trek) => (
+            <Link
+              to={`/outing/${trek.id}`}
+              key={trek.id}
+              className="transform transition-all duration-300 hover:scale-105 hover:-translate-y-1"
+            >
+              <Card className="overflow-hidden h-full bg-white">
+                {/* Trek Image */}
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img
+                    src={trek.images[0]}
+                    alt={trek.name}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  />
+                </div>
 
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex items-center text-sm text-gray-600">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  <span>{outing.date}</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Clock className="w-4 h-4 mr-2" />
-                  <span>{outing.duration}</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  <span>{outing.location}</span>
-                </div>
-              </div>
-            </CardContent>
-
-            <CardFooter>
-              <Button className="w-full">Book Now</Button>
-            </CardFooter>
-          </Card>
-        ))}
+                {/* Card Content */}
+                <CardHeader className="p-3 sm:p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h2 className="text-lg sm:text-xl font-semibold line-clamp-1">
+                        {trek.name}
+                      </h2>
+                      <div className="flex items-center text-gray-600 mt-1">
+                        <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                        <span className="text-xs sm:text-sm">{trek.location}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
