@@ -56,13 +56,14 @@ router.get("/allcontact", async (req, res) => {
 });
 
 // PUT: Update a contact
-router.put("/updatecontact/:id", async (req, res) => {
-  const { id } = req.params;
-  const updateData = req.body;
+router.put("/updatecontact", async (req, res) => {
+  const { _id } = req.body; // Expect `_id` in the request body
+  const updateData = req.body; // Other fields to update
 
   try {
-    const updatedContact = await Contact.findOneAndUpdate({ id }, updateData, {
-      new: true,
+    // Find the contact by `_id` and update it
+    const updatedContact = await Contact.findByIdAndUpdate(_id, updateData, {
+      new: true, // Return the updated document
     });
 
     if (!updatedContact) {
@@ -72,6 +73,7 @@ router.put("/updatecontact/:id", async (req, res) => {
       });
     }
 
+    // Respond with the updated contact
     res.json({
       success: true,
       message: "Contact updated successfully",

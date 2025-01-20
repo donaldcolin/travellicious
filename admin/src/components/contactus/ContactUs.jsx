@@ -99,39 +99,50 @@ const ContactList = () => {
 
   const handleStatusChange = async (_id, newStatus) => {
     try {
+      // Make the API call to update contact status
       const response = await fetch("http://localhost:4000/updatecontact", {
-        method: 'POST',
+        method: "PUT", // Use PUT for updates instead of POST
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ _id, status: newStatus }),
+        body: JSON.stringify({ _id, status: newStatus }), // Send the contact ID and new status
       });
-
-      if (response.ok) {
-        setContacts((prevContacts) =>
-          prevContacts.map((contact) =>
-            contact._id === _id ? { ...contact, status: newStatus } : contact
-          )
-        );
-        toast({
-          title: "Status updated",
-          description: "Contact status has been updated successfully",
-          duration: 2000,
-        });
-      } else {
-        throw new Error('Failed to update status');
+  
+      // Check if the response is successful
+      if (!response.ok) {
+        const errorData = await response.json(); // Parse the error response
+        throw new Error(errorData.message || "Failed to update status");
       }
+  
+      // Parse the JSON response
+      const updatedContact = await response.json();
+  
+      // Update the local state to reflect the changes
+      setContacts((prevContacts) =>
+        prevContacts.map((contact) =>
+          contact._id === _id ? { ...contact, status: newStatus } : contact
+        )
+      );
+  
+      // Show a success toast notification
+      toast({
+        title: "Status updated",
+        description: "Contact status has been updated successfully",
+        duration: 2000,
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error updating status:", error);
+  
+      // Show an error toast notification
       toast({
         title: "Update failed",
-        description: "Failed to update contact status",
+        description: error.message || "Failed to update contact status",
         variant: "destructive",
         duration: 3000,
       });
     }
   };
-
   const handleRemove = async (_id) => {
     try {
       const response = await fetch("http://localhost:4000/removecontact", {
