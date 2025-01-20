@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Sidebar.css';
-
+import Logo from '/Users/donaldcolin/travelicious/admin/src/assets/logo.jpeg'
 const Sidebar = () => {
   return (
     <div className="sidebar">
@@ -9,7 +9,7 @@ const Sidebar = () => {
       <div className="sidebar-header">
         <div className="brand-container">
           <img
-            src="/logo.png"
+            src={Logo}
             alt="Travellicious"
             className="brand-logo"
           />
