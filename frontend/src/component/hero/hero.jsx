@@ -54,7 +54,7 @@ export const Hero = () => {
 
       {/* Hero Content */}
       <div className="relative z-20 text-center px-4 md:px-0 max-w-4xl mx-auto">
-        <h1 className="font-ephesis text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 text-white">
+        <h1 className="font-ephesis text-4xl md:text-6xl lg:text-8xl font-bold mb-4 md:mb-6 text-white">
           Welcome to Travellicious
         </h1>
         <p className="text-lg md:text-xl text-white/90 mb-8 md:mb-10 max-w-2xl mx-auto">

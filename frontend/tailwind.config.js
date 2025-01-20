@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+	
   darkMode: ["class"],
   content: [
     './pages/**/*.{js,jsx}',
@@ -9,6 +10,11 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+	extend: {
+		fontFamily: {
+		  'ephesis': ['Ephesis', 'cursive'],
+		},
+	  },
   	container: {
   		center: true,
   		padding: '2rem',

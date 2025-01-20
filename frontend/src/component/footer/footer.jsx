@@ -1,5 +1,6 @@
 import React from 'react';
 import { Instagram, Facebook, Youtube } from 'lucide-react';
+import logo from '../assets/logo.jpeg';
 
  export const Footer = () => {
   const navigation = {
@@ -24,9 +25,9 @@ import { Instagram, Facebook, Youtube } from 'lucide-react';
           {/* Logo and Title */}
           <div className="flex items-center space-x-3">
             <img
-              src="/api/placeholder/40/40"
+              src={logo}
               alt="Travellicious Logo"
-              className="h-10 w-10 rounded-full border-2 border-blue-400 p-1"
+              className="h-10 w-10 rounded-full  "
             />
             <span className="text-xl font-bold ">
               Travellicious

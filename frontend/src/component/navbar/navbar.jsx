@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingCart, LogIn,PersonStanding } from 'lucide-react';
+import { Menu, X, ShoppingBag, LogIn,User } from 'lucide-react';
+import logo from '../assets/logo.jpeg';
 
 
 export const Navbar = () => {
@@ -32,9 +33,9 @@ export const Navbar = () => {
           {/* Logo Section */}
           <Link to="/home" className="flex items-center space-x-3 flex-shrink-0">
             <img
-              src=""
+              src={logo}
               alt="Logo"
-              className="h-10 w-10 rounded-full border-2 border-blue-400"
+              className="h-15 w-10 rounded-full border-2 "
             />
             <span className="text-2xl font-bold text-white hover:text-blue-200 transition duration-300">
               Travellicious
@@ -65,10 +66,10 @@ export const Navbar = () => {
             {/* Desktop Buttons */}
             <div className="flex items-center space-x-4">
               <button className="flex items-center space-x-1 px-4 py-2 text-sm text-white hover:text-blue-200 transition duration-300">
-                <PersonStanding className="h-4 w-4" />
+                <User className="h-6 w-4" />
               </button>
-              <button className="flex items-center space-x-1 px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
-                <ShoppingCart className="h-4 w-4" />
+              <button className="flex items-center space-x-1 px-4 py-2 text-sm text-white rounded-md hover:bg-blue-700 transition duration-300">
+                <ShoppingBag className="h-6 w-4" />
           
               </button>
             </div>
@@ -114,7 +115,7 @@ export const Navbar = () => {
                 <span>Login</span>
               </button>
               <button className="flex items-center space-x-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300">
-                <ShoppingCart className="h-4 w-4" />
+                <ShoppingBag className="h-4 w-4" />
                 <span>Cart</span>
               </button>
             </div>
