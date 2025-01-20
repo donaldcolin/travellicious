@@ -17,22 +17,40 @@ export const ProductDisplay = ({ product }) => {
   return (
     <div className="min-h-screen py-4 md:py-12 bg-gray-50 md:bg-white">
       {/* Mobile Image Gallery */}
-      <div className="md:hidden w-full overflow-x-auto bg-white">
-        <div className="flex gap-4 p-4 snap-x snap-mandatory">
-          {product.images.map((image, index) => (
-            <div
-              key={index}
-              className="snap-center shrink-0 first:pl-4 last:pr-4"
-            >
-              <img
-                src={image}
-                alt={`Trek view ${index + 1}`}
-                className="w-80 h-64 object-cover rounded-lg"
-              />
-            </div>
-          ))}
-        </div>
+      <div className="md:hidden w-full bg-white">
+  {/* Image Carousel */}
+  <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar">
+    {product.images.map((image, index) => (
+      <div
+        key={index}
+        className="snap-center shrink-0 w-full relative"
+        style={{ flex: "0 0 100%" }} // Ensures each image takes full width
+      >
+        <img
+          src={image}
+          alt={`Product view ${index + 1}`}
+          className="w-full h-126 object-cover rounded-lg"
+        />
+        {/* Heart Icon */}
+       
       </div>
+    ))}
+  </div>
+
+  {/* Dots Indicator */}
+  <div className="flex justify-center gap-2 mt-2">
+    {product.images.map((_, index) => (
+      <div
+        key={index}
+        className={`h-2 w-2 rounded-full ${
+          selectedImage === product.images[index]
+            ? "bg-blue-600"
+            : "bg-gray-300"
+        }`}
+      ></div>
+    ))}
+  </div>
+</div>
 
       <Card className="container max-h-8xl bg-white rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2 gap-8 p-4 md:p-6">
