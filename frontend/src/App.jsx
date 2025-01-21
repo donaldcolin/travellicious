@@ -6,6 +6,7 @@ import { Hero } from "./component/hero/hero";
 import { Newsletter } from "./component/newsletter/newsletter";
 import Preloader from "./component/preloader/preloader";
 import React from "react";
+import ScrollToTop from "./scrolltotop";
 // Pages
 import ContactUs from "./pages/contactus";
 import { Treks } from "./pages/treks";
@@ -64,6 +65,7 @@ function App() {
         <Preloader /> // Show the preloader while loading
       ) : (
         <BrowserRouter>
+        <ScrollToTop/>
           <AppContent />
         </BrowserRouter>
       )}
