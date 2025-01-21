@@ -3,6 +3,12 @@ import { Button } from "../../components/ui/button.jsx";
 import { Card } from "../../components/ui/card.tsx";
 import { MapPin, Mountain, Clock, Footprints, Activity, CheckCircle2 } from "lucide-react";
 import ContactSideSheet from "./SideSheet.jsx";
+import { Swiper, SwiperSlide } from "swiper/react";
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination } from 'swiper/modules';
 
 export const ProductDisplay = ({ product }) => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -16,44 +22,35 @@ export const ProductDisplay = ({ product }) => {
 
   return (
     <div className="min-h-screen py-4 md:py-12 bg-gray-50 md:bg-white">
-      {/* Mobile Image Gallery */}
+      {/* Mobile Image Gallery with Swiper */}
       <div className="md:hidden w-full bg-white">
-  {/* Image Carousel */}
-  <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar">
-    {product.images.map((image, index) => (
-      <div
-        key={index}
-        className="snap-center shrink-0 w-full relative"
-        style={{ flex: "0 0 100%" }} // Ensures each image takes full width
-      >
-        <img
-          src={image}
-          alt={`Product view ${index + 1}`}
-          className="w-full h-126 object-cover rounded-lg"
-        />
-        {/* Heart Icon */}
-       
+        <Swiper
+          modules={[Pagination, Navigation]}
+          spaceBetween={10}
+          slidesPerView={1}
+          pagination={{ clickable: true }}
+          //navigation
+          className="h-96 rounded-lg"
+          style={{
+            "--swiper-navigation-color": "#2563eb",
+            "--swiper-pagination-color": "#2563eb",
+          }}
+        >
+          {product.images.map((image, index) => (
+            <SwiperSlide key={index}>
+              <img
+                src={image}
+                alt={`Product view ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
-    ))}
-  </div>
-
-  {/* Dots Indicator */}
-  <div className="flex justify-center gap-2 mt-2">
-    {product.images.map((_, index) => (
-      <div
-        key={index}
-        className={`h-2 w-2 rounded-full ${
-          selectedImage === product.images[index]
-            ? "bg-blue-600"
-            : "bg-gray-300"
-        }`}
-      ></div>
-    ))}
-  </div>
-</div>
 
       <Card className="container max-h-8xl bg-white rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2 gap-8 p-4 md:p-6">
+          {/* Rest of the component remains exactly the same */}
           {/* Left side content - Desktop Only */}
           <div className="hidden md:block space-y-8">
             {/* Main Image */}
