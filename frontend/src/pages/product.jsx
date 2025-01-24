@@ -1,23 +1,33 @@
-import React from "react";
-import "./css/product.css";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useParams } from "react-router-dom";
-import { treksData } from "./trekData";
 import { ProductDisplay } from "../component/productdisplay/ProductDisplay";
 
-
 export const ProductPage = () => {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { productId } = useParams();
-  const product = treksData.find((e) => e.id === Number(productId));
+  
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`http://localhost:4000/allproducts/${productId}`);
+        setProduct(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
 
-  if (!product) {
-    return <div>Product not found</div>;
-  }
+    fetchProduct();
+  }, [productId]);
 
-  return (
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!product) return <div>Product not found</div>;
 
-      <ProductDisplay product={product} />
-      
-    
- 
-  );
+  return <ProductDisplay product={product} />;
 };

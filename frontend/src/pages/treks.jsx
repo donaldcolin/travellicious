@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import { Card, CardHeader } from "../components/ui/card.tsx";
-import { MapPin} from "lucide-react";
-import { treksData } from './trekData'; // Importing trek data
-
+import { MapPin } from "lucide-react";
 
 export const Treks = () => {
+  const [treks, setTreks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTreks = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/allproducts');
+        setTreks(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching treks:', error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchTreks();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <div id="treks-section" className="bg-gray-50 min-h-screen py-12">
       <div className="container mx-auto px-4">
@@ -19,7 +41,7 @@ export const Treks = () => {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-          {treksData.map((trek) => (
+          {treks.map((trek) => (
             <Link
               to={`/treks/${trek.id}`}
               key={trek.id}
@@ -28,11 +50,10 @@ export const Treks = () => {
               <Card className="overflow-hidden h-full bg-white">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img
-                    src={trek.images[0]}
+                    src={trek.image}
                     alt={trek.name}
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                   />
-                  
                 </div>
 
                 <CardHeader className="space-y-2">
