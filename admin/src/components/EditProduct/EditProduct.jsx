@@ -18,7 +18,7 @@ const EditProduct = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`/allproducts/${id}`)
+        const response = await axios.get(`http://localhost:4000/allproducts/${id}`)
         setProduct(response.data)
         setLoading(false)
       } catch (err) {
@@ -33,10 +33,10 @@ const EditProduct = () => {
 
   // Handle input changes
   const handleChange = (e) => {
-    const { name, value, files } = e.target
+    const { name, value } = e.target
     setProduct(prevProduct => ({
       ...prevProduct,
-      [name]: files ? files[0] : value
+      [name]: value
     }))
     // Clear submit error when user starts editing
     setSubmitError('')
@@ -45,31 +45,60 @@ const EditProduct = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setSubmitError('')
+
+    // Basic validation
+    if (!product.name.trim()) {
+      setSubmitError('Product name is required')
+      return
+    }
+
+    if (!product.description.trim()) {
+      setSubmitError('Product description is required')
+      return
+    }
+
+    if (isNaN(parseFloat(product.price)) || parseFloat(product.price) < 0) {
+      setSubmitError('Please enter a valid positive price')
+      return
+    }
+
     try {
-      // Add more detailed error logging
-      console.log('Sending update request for product:', product)
-      console.log('Product ID:', id)
-  
-      const response = await axios.put(`/updateproduct/${id}`, formData, {
+      // Create form data to handle potential file uploads
+      const formData = new FormData()
+      formData.append('name', product.name)
+      formData.append('description', product.description)
+      formData.append('price', product.price)
+
+      // Send API request
+      const response = await axios.put(`http://localhost:4000/updateproduct/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-  
-      console.log('Full response:', response)
+
+      // Log the response for debugging
+      console.log('Update response:', response.data)
+
+      // Redirect to product list or show success message
+      navigate('/listproduct', { 
+        state: { 
+          successMessage: `Product "${product.name}" updated successfully` 
+        } 
+      })
     } catch (err) {
       // More detailed error logging
       console.error('Full error object:', err)
       console.error('Error response:', err.response)
       console.error('Error message:', err.message)
-      console.error('Error status:', err.response?.status)
-      
+
       const errorMessage = err.response?.data?.message || 
                            err.response?.data || 
                            'Failed to update product. Please try again.'
       setSubmitError(errorMessage)
     }
   }
+
   // Render loading state
   if (loading) {
     return (
