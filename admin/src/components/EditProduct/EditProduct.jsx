@@ -64,38 +64,14 @@ const EditProduct = () => {
     }
 
     try {
-      // Create form data to handle potential file uploads
-      const formData = new FormData()
-      formData.append('name', product.name)
-      formData.append('description', product.description)
-      formData.append('price', product.price)
-
-      // Send API request
-      const response = await axios.put(`http://localhost:4000/updateproduct/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-
-      // Log the response for debugging
-      console.log('Update response:', response.data)
-
-      // Redirect to product list or show success message
-      navigate('/listproduct', { 
-        state: { 
-          successMessage: `Product "${product.name}" updated successfully` 
-        } 
-      })
+      // Submit updated product
+      const response = await axios.put(`http://localhost:4000/updateproduct/${id}`, product)
+      
+      // Navigate back to product list or product details page
+      navigate('/products')
     } catch (err) {
-      // More detailed error logging
-      console.error('Full error object:', err)
-      console.error('Error response:', err.response)
-      console.error('Error message:', err.message)
-
-      const errorMessage = err.response?.data?.message || 
-                           err.response?.data || 
-                           'Failed to update product. Please try again.'
-      setSubmitError(errorMessage)
+      setSubmitError('Failed to update product')
+      console.error('Error updating product:', err)
     }
   }
 
