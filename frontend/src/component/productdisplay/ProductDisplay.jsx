@@ -12,13 +12,23 @@ import { Navigation, Pagination } from 'swiper/modules';
 
 export const ProductDisplay = ({ product }) => {
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const [selectedImage, setSelectedImage] = useState(
+    // Handle cases where image might be a single string or an array
+    Array.isArray(product.images) 
+      ? product.images[0] 
+      : product.image || product.images
+  );
 
   const handleImageClick = (image) => {
     setSelectedImage(image);
   };
 
   const today = new Date().toISOString().split("T")[0];
+
+  // Ensure images is always an array
+  const productImages = Array.isArray(product.images) 
+    ? product.images 
+    : [product.image || product.images].filter(Boolean);
 
   return (
     <div className="min-h-screen py-4 md:py-12 bg-gray-50 md:bg-white">
@@ -29,14 +39,13 @@ export const ProductDisplay = ({ product }) => {
           spaceBetween={10}
           slidesPerView={1}
           pagination={{ clickable: true }}
-          //navigation
           className="h-96 rounded-lg"
           style={{
             "--swiper-navigation-color": "#2563eb",
             "--swiper-pagination-color": "#2563eb",
           }}
         >
-          {product.images.map((image, index) => (
+          {productImages.map((image, index) => (
             <SwiperSlide key={index}>
               <img
                 src={image}
@@ -50,7 +59,6 @@ export const ProductDisplay = ({ product }) => {
 
       <Card className="container max-h-8xl bg-white rounded-xl overflow-hidden">
         <div className="grid md:grid-cols-2 gap-8 p-4 md:p-6">
-          {/* Rest of the component remains exactly the same */}
           {/* Left side content - Desktop Only */}
           <div className="hidden md:block space-y-8">
             {/* Main Image */}
@@ -64,7 +72,7 @@ export const ProductDisplay = ({ product }) => {
 
             {/* Image Gallery */}
             <div className="grid grid-cols-4 gap-4">
-              {product.images.map((image, index) => (
+              {productImages.map((image, index) => (
                 <div
                   key={index}
                   className={`cursor-pointer rounded-lg overflow-hidden shadow-md transition-all transform hover:scale-105 ${
@@ -96,7 +104,9 @@ export const ProductDisplay = ({ product }) => {
             <div className="md:block">
               <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 md:mb-4">{product.name}</h1>
               <div className="flex items-center gap-2">
-                <span className="text-2xl md:text-3xl font-bold text-gray-900">₹{product.price?.single}</span>
+                <span className="text-2xl md:text-3xl font-bold text-gray-900">
+                  ₹{product.price?.single || product.price}
+                </span>
               </div>
             </div>
 
@@ -104,9 +114,9 @@ export const ProductDisplay = ({ product }) => {
             <div className="grid grid-cols-2 gap-3 md:gap-4">
               {[
                 { icon: MapPin, label: "Location", value: product.location },
-                { icon: Mountain, label: "Altitude", value: product.altitude },
-                { icon: Clock, label: "Duration", value: product.duration },
-                { icon: Footprints, label: "Difficulty", value: product.difficulty }
+                { icon: Mountain, label: "Altitude", value: product.altitude || "N/A" },
+                { icon: Clock, label: "Duration", value: product.duration || "N/A" },
+                { icon: Footprints, label: "Difficulty", value: product.difficulty || "N/A" }
               ].map((item, index) => (
                 <div key={index} className="bg-gray-50 p-3 md:p-4 rounded-lg flex items-start gap-2 md:gap-3">
                   <item.icon className="h-4 w-4 md:h-5 md:w-5 text-blue-600 mt-1" />
@@ -128,7 +138,9 @@ export const ProductDisplay = ({ product }) => {
             <div className="bg-gray-50 p-4 md:p-6 rounded-lg">
               <div className="bg-blue-50 p-3 md:p-4 rounded-lg border border-blue-200">
                 <h2 className="text-base md:text-lg text-gray-700 mb-1 md:mb-2">Next Available Date:</h2>
-                <span className="text-lg md:text-xl font-bold text-blue-600">{product.nextdate}</span>
+                <span className="text-lg md:text-xl font-bold text-blue-600">
+                  {product.nextdate || "Date Not Specified"}
+                </span>
               </div>
             </div>
 
@@ -149,7 +161,7 @@ export const ProductDisplay = ({ product }) => {
             <div className="bg-gray-50 p-4 md:p-6 rounded-lg">
               <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-2 md:mb-4">Key Attractions</h2>
               <div className="space-y-2 md:space-y-3">
-                {product.attractions?.map((attraction, index) => (
+                {(product.attractions || []).map((attraction, index) => (
                   <div key={index} className="flex items-center gap-2 md:gap-3 bg-white p-3 rounded-lg">
                     <Activity className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
                     <span className="text-sm md:text-base text-gray-700">{attraction}</span>

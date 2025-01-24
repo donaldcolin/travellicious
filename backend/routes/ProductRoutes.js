@@ -46,6 +46,31 @@ router.get("/allproducts", async (req, res) => {
   }
 });
 
+router.get("/allproducts/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+    
+    // Find product by the custom ID field, not MongoDB's _id
+    const product = await Product.findOne({ id: Number(productId) });
+
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: `Product with ID ${productId} not found` 
+      });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error(`Error fetching product with ID ${req.params.id}:`, error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching product",
+      error: error.message,
+    });
+  }
+});
+
 // Update a product
 router.put("/updateproduct", async (req, res) => {
   try {
@@ -58,6 +83,38 @@ router.put("/updateproduct", async (req, res) => {
 
     if (!updatedProduct) {
       return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    res.json({
+      success: true,
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating product",
+      error: error.message,
+    });
+  }
+});
+router.put("/updateproduct/:id", async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the product ID from the request params
+    const updateData = req.body; // Extract other data from the request body
+
+    // Find and update the product
+    const updatedProduct = await Product.findOneAndUpdate(
+      { id: id }, // Assuming `id` is the MongoDB ObjectId; adjust if necessary
+      { $set: updateData },
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Product not found" 
+      });
     }
 
     res.json({
