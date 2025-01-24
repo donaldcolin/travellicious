@@ -68,7 +68,7 @@ const EditProduct = () => {
       const response = await axios.put(`http://localhost:4000/updateproduct/${id}`, product)
       
       // Navigate back to product list or product details page
-      navigate('/products')
+      navigate('/listproduct')
     } catch (err) {
       setSubmitError('Failed to update product')
       console.error('Error updating product:', err)
