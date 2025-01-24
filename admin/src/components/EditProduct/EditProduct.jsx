@@ -10,6 +10,7 @@ const EditProduct = () => {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [submitError, setSubmitError] = useState('')
   const { id } = useParams()
   const navigate = useNavigate()
 
@@ -37,42 +38,38 @@ const EditProduct = () => {
       ...prevProduct,
       [name]: files ? files[0] : value
     }))
+    // Clear submit error when user starts editing
+    setSubmitError('')
   }
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-  
+    e.preventDefault()
     try {
-      // Create form data to handle file uploads
-      const formData = new FormData();
-      Object.keys(product).forEach((key) => {
-        if (product[key]) {
-          formData.append(key, product[key]);
-        }
-      });
+      // Add more detailed error logging
+      console.log('Sending update request for product:', product)
+      console.log('Product ID:', id)
   
-      // Log FormData to ensure it's structured correctly
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-      }
-  
-      // Send API request
       const response = await axios.put(`/updateproduct/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      });
+      })
   
-      console.log('Update response:', response.data);
-  
-      // Redirect to product list or show success message
-      navigate('/listproduct');
+      console.log('Full response:', response)
     } catch (err) {
-      setError('Failed to update product');
-      console.error('Error updating product:', err.response?.data || err.message);
+      // More detailed error logging
+      console.error('Full error object:', err)
+      console.error('Error response:', err.response)
+      console.error('Error message:', err.message)
+      console.error('Error status:', err.response?.status)
+      
+      const errorMessage = err.response?.data?.message || 
+                           err.response?.data || 
+                           'Failed to update product. Please try again.'
+      setSubmitError(errorMessage)
     }
-  };
+  }
   // Render loading state
   if (loading) {
     return (
@@ -96,9 +93,17 @@ const EditProduct = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Edit Product
+          Edit Product: {product.name}
         </h2>
       </div>
+
+      {submitError && (
+        <div className="sm:mx-auto sm:w-full sm:max-w-md mt-4">
+          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            {submitError}
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
