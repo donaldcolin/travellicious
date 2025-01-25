@@ -4,8 +4,9 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const productRoutes = require("./routes/ProductRoutes");
-const outingRoutes = require("./routes/Outingroutes")
-const contactRoutes =require("./routes/ContactRoutes")
+const outingRoutes = require("./routes/Outingroutes");
+const contactRoutes = require("./routes/ContactRoutes");
+const galleryRoutes = require("./routes/GalleryRoutes");
 
 const app = express();
 const port = 4000;
@@ -38,7 +39,7 @@ const upload = multer({ storage }).array("product", 5);
 app.post("/upload", upload, (req, res) => {
   if (!req.files) {
     return res.status(400).json({ success: 0, message: "No files uploaded" });
-  }
+  } 
 
   const imageUrls = req.files.map((file) => `http://localhost:${port}/images/${file.filename}`);
   res.json({ success: 1, image_urls: imageUrls });
@@ -48,7 +49,9 @@ app.post("/upload", upload, (req, res) => {
 // Routes
 app.use("/", productRoutes);
 app.use("/",outingRoutes);
-app.use("/",contactRoutes)
+app.use("/",contactRoutes);
+app.use("/",galleryRoutes);
+
 
 
 // Start server
