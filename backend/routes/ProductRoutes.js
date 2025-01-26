@@ -35,7 +35,14 @@ router.post("/addproduct", async (req, res) => {
 router.get("/allproducts", async (req, res) => {
   try {
     const products = await Product.find({});
-    res.json(products);
+    
+    // Map products to include full image URLs
+    const productsWithFullImages = products.map(product => ({
+      ...product.toObject(),
+      image: product.image ? `http://localhost:4000/images/${product.image}` : null
+    }));
+
+    res.json(productsWithFullImages);
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({

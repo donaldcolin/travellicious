@@ -6,14 +6,17 @@ const path = require("path");
 const productRoutes = require("./routes/ProductRoutes");
 const outingRoutes = require("./routes/Outingroutes");
 const contactRoutes = require("./routes/ContactRoutes");
-const galleryRoutes = require("./routes/GalleryRoutes");
+
 
 const app = express();
 const port = 4000;
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Static folder for image uploads
 app.use("/images", express.static(path.join(__dirname, "upload/images")));
@@ -50,7 +53,7 @@ app.post("/upload", upload, (req, res) => {
 app.use("/", productRoutes);
 app.use("/",outingRoutes);
 app.use("/",contactRoutes);
-app.use("/",galleryRoutes);
+
 
 
 

@@ -1,0 +1,65 @@
+/* Container */
+.treks-container {
+  padding: 20px;
+}
+
+/* Grid Layout - Fixed 3x3 */
+.treks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 20px;
+}
+
+/* Card Styling */
+.trek-card-link {
+  text-decoration: none;
+}
+
+.trek-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.trek-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Image Styling */
+.image-container {
+  overflow: hidden;
+}
+
+.trek-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.trek-card:hover .trek-image {
+  transform: scale(1.1); /* Zoom effect */
+}
+
+/* Text Info */
+.trek-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.trek-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.trek-location {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}

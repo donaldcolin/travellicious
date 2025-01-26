@@ -1,32 +1,81 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Card, CardHeader } from "../components/ui/card.tsx";
-import { MapPin } from "lucide-react";
+import { Card, CardHeader } from "../components/ui/card";
+import { MapPin, RefreshCw } from "lucide-react";
+import { Button } from "../components/ui/button";
+
+// Skeleton Loader Component
+const TrekSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="bg-gray-200 aspect-[4/3] mb-4"></div>
+    <div className="space-y-2">
+      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+    </div>
+  </div>
+);
 
 export const Treks = () => {
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchTreks = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/allproducts');
-        setTreks(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching treks:', error);
-        setError(error.message);
-        setLoading(false);
-      }
-    };
+  const fetchTreks = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://localhost:4000/allproducts');
+      setTreks(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching treks:', error);
+      setError(error.message);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTreks();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return (
+    <div className="container mx-auto px-4 grid grid-cols-2 lg:grid-cols-3 gap-6">
+      {[...Array(6)].map((_, index) => <TrekSkeleton key={index} />)}
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">Failed to Load Treks</h2>
+        <p className="text-gray-600 mb-6">Unable to fetch adventure details. Please check your connection.</p>
+        <Button 
+          onClick={fetchTreks} 
+          className="flex items-center justify-center gap-2 mx-auto"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Reload Treks
+        </Button>
+      </div>
+    </div>
+  );
+
+  if (treks.length === 0) return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">No Treks Available</h2>
+        <p className="text-gray-600 mb-6">We couldn't find any trek adventures at the moment.</p>
+        <Button 
+          onClick={fetchTreks} 
+          className="flex items-center justify-center gap-2 mx-auto"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Try Again
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
     <div id="treks-section" className="bg-gray-50 min-h-screen py-12">
@@ -50,7 +99,7 @@ export const Treks = () => {
               <Card className="overflow-hidden h-full bg-white">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <img
-                    src={trek.image}
+                    src={trek.images[0]} 
                     alt={trek.name}
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                   />

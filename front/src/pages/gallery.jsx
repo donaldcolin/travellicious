@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "../components/ui/card";
+import { Card,CardContent } from "@/components/ui/card";
 
 export const Gallery = () => {
   const [images, setImages] = useState([]);
@@ -11,15 +11,12 @@ export const Gallery = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/allproducts');
+        const response = await axios.get('http://localhost:4000/allimages');
         
-        const formattedImages = response.data.flatMap(product => 
-          product.images.map((image, index) => ({
-            image: image.startsWith('http') ? image : `http://localhost:4000${image}`,
-            trekId: product.id,
-            trekName: product.name
-          }))
-        );
+        const formattedImages = response.data.image_urls.map((imageUrl, index) => ({
+          image: imageUrl.startsWith('http') ? imageUrl : `http://localhost:4000${imageUrl}`,
+          trekId: index + 1
+        }));
 
         setImages(formattedImages);
         setLoading(false);
@@ -55,7 +52,7 @@ export const Gallery = () => {
         <p className="text-center text-gray-500">No images found</p>
       ) : (
         <div 
-          className="grid grid-cols-2 md:grid-cols-3 gap-4"
+          className="grid grid-cols-3 gap-4"
           style={{
             gridAutoRows: "200px",
           }}
@@ -70,8 +67,8 @@ export const Gallery = () => {
                 key={index}
                 className="block overflow-hidden"
                 style={{
-                  gridColumn: `span ${window.innerWidth < 768 ? 1 : colSpan}`,
-                  gridRow: `span ${window.innerWidth < 768 ? 1 : rowSpan}`,
+                  gridColumn: `span ${colSpan}`,
+                  gridRow: `span ${rowSpan}`,
                 }}
               >
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
@@ -79,7 +76,7 @@ export const Gallery = () => {
                     <div className="w-full h-full relative">
                       <img
                         src={imgData.image}
-                        alt={`${imgData.trekName} Image`}
+                        alt={`Trek Image ${index + 1}`}
                         className="object-cover w-full h-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
                       />
                     </div>
@@ -93,5 +90,3 @@ export const Gallery = () => {
     </div>
   );
 };
-
-export default Gallery;
