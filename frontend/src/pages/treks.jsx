@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Card, CardHeader } from "../components/ui/card";
+import { Card } from "@/components/ui/card";
 import { MapPin, RefreshCw } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 
 // Skeleton Loader Component
 const TrekSkeleton = () => (
@@ -16,6 +16,41 @@ const TrekSkeleton = () => (
   </div>
 );
 
+// Trek Card Component
+const TrekCard = ({ trek }) => {
+  return (
+    <Link
+      to={`/treks/${trek.id}`}
+      className="block transform transition-all duration-300 hover:scale-102 hover:-translate-y-1"
+    >
+      <Card className="relative overflow-hidden h-full bg-white group">
+        <div className="relative aspect-[4/3] w-full">
+          <img
+            src={trek.images[0]}
+            alt={trek.name}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+          
+          {/* Gradient overlay that fades out on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
+
+          {/* Content that fades out on hover */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 transition-opacity duration-300 group-hover:opacity-0">
+            <h2 className="text-xl font-semibold text-white mb-2 line-clamp-1">
+              {trek.name}
+            </h2>
+            <div className="flex items-center text-white/90">
+              <MapPin className="w-4 h-4 mr-1" />
+              <span className="text-sm">{trek.location}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </Link>
+  );
+};
+
+// Main Treks Component
 export const Treks = () => {
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,35 +126,7 @@ export const Treks = () => {
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {treks.map((trek) => (
-            <Link
-              to={`/treks/${trek.id}`}
-              key={trek.id}
-              className="transform transition-all duration-300 hover:scale-102 hover:-translate-y-1"
-            >
-              <Card className="overflow-hidden h-full bg-white">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <img
-                    src={trek.images[0]} 
-                    alt={trek.name}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                  />
-                </div>
-
-                <CardHeader className="space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h2 className="text-xl font-semibold line-clamp-1">
-                        {trek.name}
-                      </h2>
-                      <div className="flex items-center text-gray-600 mt-1">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        <span className="text-sm">{trek.location}</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            </Link>
+            <TrekCard key={trek.id} trek={trek} />
           ))}
         </div>
       </div>
