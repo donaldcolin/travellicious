@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Youtube } from 'lucide-react';
-import Trek from "/Users/donaldcolin/travelicious/frontend/src/component/assets/trek.jpeg";
-import mountaintrek from "/Users/donaldcolin/travelicious/frontend/src/component/assets/mountaintrek.jpg"
-import sunterk from "/Users/donaldcolin/travelicious/frontend/src/component/assets/suntrek.jpg"
+import Trek from "../assets/trek.jpeg";
+import mountaintrek from "../assets/mountaintrek.jpg"
+import sunterk from "../assets/suntrek.jpg"
 
 // Import all your images here
 const images = [
