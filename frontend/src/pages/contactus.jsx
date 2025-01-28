@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import "./css/contactus.css";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { MapPin, Phone, Mail, AlertCircle, CheckCircle2 } from "lucide-react";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +39,6 @@ const ContactUs = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form before submission
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -47,7 +49,6 @@ const ContactUs = () => {
       setError(null);
       setMessage(null);
 
-      // Replace the URL below with your actual backend API endpoint
       const response = await fetch("http://localhost:4000/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,79 +67,125 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="contactus-container">
-      <h1>Contact Travellicious</h1>
-      <div className="contactus-content">
-        {/* Form Section */}
-        <form onSubmit={handleSubmit} className="contactus-form">
-          <div className="form-group">
-            <label htmlFor="name">Name:</label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="Enter your name"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="Enter your email"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="phone">Phone:</label>
-            <input
-              type="tel"
-              name="phone"
-              id="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              placeholder="Enter your phone number"
-            />
-          </div>
+    <div className="min-h-screen bg-gray-50 pt-24 pb-12">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-4">
+            Contact Travellicious
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Get in touch with us for any queries about our adventures or services
+          </p>
+        </div>
 
-          {/* Error Message */}
-          {error && <p className="error-message">{error}</p>}
+        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* Contact Form */}
+          <Card className="p-6">
+            <CardContent className="p-0">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    Name
+                  </label>
+                  <Input
+                    type="text"
+                    name="name"
+                    id="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter your name"
+                    className="w-full"
+                  />
+                </div>
 
-          {/* Success Message */}
-          {message && <p className="success-message">{message}</p>}
+                <div className="space-y-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <Input
+                    type="email"
+                    name="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter your email"
+                    className="w-full"
+                  />
+                </div>
 
-          <button type="submit" className="submit-btn">
-            Submit
-          </button>
-        </form>
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    Phone
+                  </label>
+                  <Input
+                    type="tel"
+                    name="phone"
+                    id="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter your phone number"
+                    className="w-full"
+                  />
+                </div>
 
-        {/* Company Address and Map */}
-        <div className="address-map">
-          <div className="address-container">
-            <h2>Our Address</h2>
-            <p>Travellicious Pvt Ltd.</p>
-            <p>HSR Layout, Bengaluru, Karnataka, India</p>
-            <p>Contact: +91 9876543210</p>
-          </div>
+                {error && (
+                  <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-md">
+                    <AlertCircle className="w-5 h-5" />
+                    <p className="text-sm">{error}</p>
+                  </div>
+                )}
 
-          <div className="map-container">
-            <h2>Find Us on the Map</h2>
-            <iframe
-              src="https://www.google.com/maps?q=HSR+Layout,+Bangalore&output=embed"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              title="Company Location"
-            ></iframe>
+                {message && (
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-md">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <p className="text-sm">{message}</p>
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full">
+                  Submit
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Company Info and Map */}
+          <div className="space-y-8">
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-6">Get in Touch</h2>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-gray-600 mt-1" />
+                  <div>
+                    <p className="font-medium">Travellicious Pvt Ltd.</p>
+                    <p className="text-gray-600">HSR Layout, Bengaluru,</p>
+                    <p className="text-gray-600">Karnataka, India</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-gray-600" />
+                  <p className="text-gray-600">+91 9876543210</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-gray-600" />
+                  <p className="text-gray-600">contact@travellicious.com</p>
+                </div>
+              </div>
+            </Card>
+
+            <div className="rounded-lg overflow-hidden shadow-md bg-white">
+              <iframe
+                src="https://www.google.com/maps?q=HSR+Layout,+Bangalore&output=embed"
+                className="w-full h-[400px]"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                title="Company Location"
+              ></iframe>
+            </div>
           </div>
         </div>
       </div>

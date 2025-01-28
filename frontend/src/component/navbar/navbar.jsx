@@ -26,24 +26,24 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-2 left-2 right-2 z-50">
+    <nav className="fixed top-2 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
       <div className="bg-black/20 backdrop-blur-md rounded-2xl border border-white/10">
-        <div className="mx-auto px-4 flex items-center justify-between h-12">
-          {/* Logo Section */}
-          <Link to="/home" className="flex items-center space-x-2">
+        <div className="mx-auto px-3 flex items-center justify-between h-12">
+          {/* Logo Section - Reduced spacing */}
+          <Link to="/home" className="flex items-center space-x-1">
             <img
               src={logobg}
               alt="Logo"
-              className="h-6 w-6"
+              className="h-20 w-10"
             />
             <span className="text-base font-bold text-white/90 hover:text-white transition duration-300">
               Travellicious
             </span>
           </Link>
 
-          {/* Desktop Navigation - Minimal spacing */}
+          {/* Desktop Navigation - Reduced spacing */}
           <div className="hidden md:flex flex-1 items-center justify-center">
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-10">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
@@ -63,8 +63,8 @@ export const Navbar = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="hidden md:flex items-center space-x-3">
+          {/* Action Buttons - Reduced spacing */}
+          <div className="hidden md:flex items-center space-x-6">
             <button className="text-white/70 hover:text-white transition duration-300">
               <User className="h-4 w-4" />
             </button>
@@ -88,9 +88,9 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation - Increased blur effect */}
         {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 mt-2 bg-black/20 backdrop-blur-lg rounded-xl">
+          <div className="md:hidden absolute top-full left-0 right-0 mt-2 bg-black/40 backdrop-blur-xl rounded-xl">
             <div className="px-4 py-3 space-y-2">
               {navItems.map((item) => (
                 <Link
