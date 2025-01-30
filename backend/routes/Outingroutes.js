@@ -43,6 +43,30 @@ router.get("/allOutings", async (req, res) => {
     });
   }
 });
+router.get("/allOutings/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+    
+    // Find product by the custom ID field, not MongoDB's _id
+    const product = await Outing.findOne({ id: Number(productId) });
+
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        message: `Product with ID ${productId} not found` 
+      });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error(`Error fetching product with ID ${req.params.id}:`, error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching product",
+      error: error.message,
+    });
+  }
+});
 
 router.put("/updateOuting", async (req, res) => {
   try {
@@ -86,5 +110,6 @@ router.post("/removeOuting", async (req, res) => {
     res.status(500).json({ success: false, message: "Error removing product" });
   }
 });
+
 
 module.exports = router;

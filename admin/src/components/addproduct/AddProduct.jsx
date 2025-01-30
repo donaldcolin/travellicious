@@ -13,7 +13,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: "",
-    category: "Trek",
+  
     location: "",
     distanceFromBangalore: "",
     nextdate: new Date(), // Single date
@@ -21,6 +21,8 @@ const AddProduct = () => {
     duration: "",
     description: "",
     bigDescription: "",
+    dificulty: "",
+    altitude: "",
     images: [],
     attractions: [""],
     services: {
@@ -115,7 +117,7 @@ const AddProduct = () => {
           // Reset form
           setFormData({
             name: "",
-            category: "Trek",
+        
             location: "",
             distanceFromBangalore: "",
             nextdate: new Date(),
@@ -123,6 +125,9 @@ const AddProduct = () => {
             duration: "",
             description: "",
             bigDescription: "",
+            dificulty: "",
+            altitude: "",
+        
             images: [],
             attractions: [""],
             services: {
@@ -175,21 +180,7 @@ const AddProduct = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Category</label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Trek">Trek</SelectItem>
-                    <SelectItem value="Outing">Outing</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+             
 
               <div>
                 <label className="block text-sm font-medium mb-1">Next Available Date</label>
@@ -242,6 +233,28 @@ const AddProduct = () => {
                   onChange={handleChange}
                   placeholder="Enter location"
                   required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Dificulty</label>
+                <Input
+                  type="text"
+                  name="dificulty"
+                  value={formData.dificulty}
+                  onChange={handleChange}
+                  placeholder="Enter dificulty"
+                
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Altitude</label>
+                <Input
+                  type="text"
+                  name="altitude"
+                  value={formData.altitude}
+                  onChange={handleChange}
+                  placeholder="Enter altitude"
+              
                 />
               </div>
 
