@@ -80,10 +80,12 @@ const ContactSideSheet = () => {
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isOpen} onOpenChange={setIsOpen} className={`fixed top-0 right-0 w-full md:max-w-md h-full bg-white shadow-lg rounded-t-2xl md:rounded-none overflow-hidden transition-transform  ${
+      isOpen ? "translate-x-0" : "translate-x-full"
+    }`}>
       <SheetTrigger asChild>
         <div className="flex justify-center items-center">
-          <Button className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-full hover:bg-blue-700 transition-all">
+          <Button className="w-full py-4 bg-gray-900 text-white hover:bg-gray-800 rounded-lg font-medium">
             Book Trek Now
           </Button>
         </div>
@@ -91,7 +93,7 @@ const ContactSideSheet = () => {
 
       {/* Side Sheet Content */}
       <SheetContent
-        className={`fixed top-0 right-0 w-full md:max-w-md h-full bg-white shadow-lg rounded-t-2xl md:rounded-none overflow-hidden transition-transform ease-in-out ${
+        className={`fixed top-0 right-0 w-full md:max-w-md h-full bg-white shadow-lg rounded-t-2xl md:rounded-none overflow-hidden transition-transform  ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

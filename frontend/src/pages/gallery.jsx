@@ -35,7 +35,7 @@ export const Gallery = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen pt-16">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500"></div>
       </div>
     );
@@ -43,14 +43,14 @@ export const Gallery = () => {
 
   if (error) {
     return (
-      <div className="text-red-500 text-center mt-10">
+      <div className="text-red-500 text-center mt-24">
         {error}
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mt-16">
       {images.length === 0 ? (
         <p className="text-center text-gray-500">No images found</p>
       ) : (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ProductDisplay } from "../component/productdisplay/ProductDisplay";
+import doubts from "../component/utils/doubts";
 
 export const ProductPage = () => {
   const [product, setProduct] = useState(null);
@@ -91,7 +92,12 @@ export const ProductPage = () => {
   }
 
   // Render product display
-  return <ProductDisplay product={product} />;
+  return (
+    <div>
+      <ProductDisplay product={product} />
+   
+    </div>
+  );
 };
 
 export default ProductPage;
