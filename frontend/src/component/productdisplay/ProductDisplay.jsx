@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "../../components/ui/button.jsx";
 import { Card } from "../../components/ui/card.tsx";
 import { MapPin, Mountain, Clock, Footprints, CheckCircle2, Calendar } from "lucide-react";
 import ContactSideSheet from "./SideSheet.jsx";
@@ -92,7 +91,10 @@ export const ProductDisplay = ({ product }) => {
                 </div>
               ))}
             </div>
-
+            <p>next available date</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-2">
+  <DateFormatter date={product.nextdate} />
+</h2>
             {/* Date Picker */}
             <div className="space-y-4">
               <div className="relative">
@@ -137,15 +139,9 @@ export const ProductDisplay = ({ product }) => {
               </div>
             </div>
 
-            {/* Booking Button */}
+      
             <ContactSideSheet>
-              <Button 
-                size="lg"
-                className="w-full py-4 bg-gray-900 text-white hover:bg-gray-800 rounded-lg font-medium"
-                disabled={!selectedDate}
-              >
-                Book Now
-              </Button>
+              
             </ContactSideSheet>
 
             {/* FAQs */}
