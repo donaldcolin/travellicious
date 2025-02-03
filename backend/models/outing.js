@@ -26,4 +26,4 @@ const OutingSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Outing", OutingSchema);
+  module.exports = mongoose.model("Outing", OutingSchema);

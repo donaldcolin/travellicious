@@ -50,25 +50,8 @@ const ImageGallery = ({
       )}
 
       {/* Thumbnail Navigation */}
-      {images.length > 1 && (
-        <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveIndex(index)}
-              className={`relative flex-none w-20 h-20 rounded-lg overflow-hidden ${
-                activeIndex === index ? 'ring-2 ring-gray-900' : 'ring-1 ring-gray-200'
-              }`}
-            >
-              <img
-                src={image}
-                alt={`${productName} thumbnail ${index + 1}`}
-                className="h-full w-full object-cover object-center"
-              />
-            </button>
-          ))}
-        </div>
-      )}
+      
+
     </div>
   );
 };
