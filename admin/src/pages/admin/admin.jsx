@@ -1,5 +1,4 @@
 import React from 'react'
-import './admin.css'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import { Route, Routes } from 'react-router-dom'
 import AddProduct from '../../components/addproduct/addproduct'

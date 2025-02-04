@@ -43,7 +43,7 @@ const Review = ({ review, index }) => {
       transition={{ delay: index * 0.1 }}
       viewport={{ once: true }}
     >
-      <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
+      <Card className="p-4 hover:shadow-lg transition-shadow duration-300">
         <div className="flex items-center gap-2 mb-4">
           {[...Array(5)].map((_, j) => (
             <Star
@@ -123,12 +123,12 @@ export const ProductDisplay = ({ product }) => {
       >
         {/* Section 1: Hero */}
         <Section animate={false} className="relative bg-gray-100 z-10">
-          <div className="w-full max-w-6xl mx-auto px-4">
+          <div className="w-full max-w-6xl  px-2 ">
             <motion.div 
               className="relative h-[70vh] w-full mb-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.6 }}
             >
               <ImageGallery 
                 images={productImages}
@@ -138,7 +138,7 @@ export const ProductDisplay = ({ product }) => {
                 setActiveIndex={setActiveIndex}
                 swiper={swiper}
                 setSwiper={setSwiper}
-                className="w-full h-full rounded-2xl overflow-hidden shadow-xl"
+                className="w-full h-full rounded-xl overflow-hidden shadow-xl"
               />
             </motion.div>
             
@@ -148,7 +148,7 @@ export const ProductDisplay = ({ product }) => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              <h1 className="text-5xl font-bold text-gray-900 drop-shadow-lg bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              <h1 className="text-6xl font-bold text-gray-900 drop-shadow-lg ">
                 {product.name}
               </h1>
               <motion.button 
@@ -165,7 +165,7 @@ export const ProductDisplay = ({ product }) => {
 
         {/* Section 2: Details */}
         <Section innerRef={section2Ref} className="bg-white">
-          <div className="w-full max-w-6xl mx-auto px-4 py-16 space-y-16">
+          <div className="w-full max-w-6xl mx-auto  px-4 py-28 space-y-16">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
                 { icon: MapPin, label: "Location", value: product.location },
