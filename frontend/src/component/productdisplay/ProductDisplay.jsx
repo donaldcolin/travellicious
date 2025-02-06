@@ -141,14 +141,14 @@ export const ProductDisplay = ({ product }) => {
                 className="w-full h-full rounded-xl overflow-hidden shadow-xl"
               />
             </motion.div>
-            
+
             <motion.div 
               className="text-center space-y-4 relative z-20"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              <h1 className="text-6xl font-bold text-gray-900 drop-shadow-lg ">
+              <h1 className="text-6xl font-bold text-white drop-shadow-lg ">
                 {product.name}
               </h1>
               <motion.button 

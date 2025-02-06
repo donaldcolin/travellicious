@@ -10,7 +10,7 @@ import ScrollToTop from "./scrolltotop";
 // Pages
 import ContactUs from "./pages/contactus";
 import { Treks } from "./pages/treks";
-import { ProductPage } from "./pages/product";
+import { ProductPage } from "./pages/trekproduct";
 import { AboutUs } from "./pages/aboutus";
 import { Login } from "./component/loginpage/login";
 import { Gallery } from "./pages/gallery";
@@ -40,7 +40,6 @@ const AppContent = () => {
         <Route path="*" element={<h1>404: Page Not Found</h1>} /> {/* Handle unknown routes */}
       </Routes>
 
-      <Newsletter />
       <Footer />
     </>
   );
