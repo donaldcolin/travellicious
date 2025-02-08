@@ -47,7 +47,7 @@ export const Hero = () => {
       ))}
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50 z-10" />
+      <div className="absolute inset-0 bg-black/40 z-10" />
 
       {/* Social Icons */}
       <div className="absolute bottom-4 md: bottom-6 right-4 md:right-6 flex gap-4 z-20">

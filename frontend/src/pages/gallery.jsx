@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "../components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const Gallery = () => {
   const [images, setImages] = useState([]);
@@ -9,19 +9,36 @@ export const Gallery = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchAllImages = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/allproducts');
+        const [productsResponse, outingsResponse] = await Promise.all([
+          axios.get('http://localhost:4000/allproducts'),
+          axios.get('http://localhost:4000/allOutings')
+        ]);
         
-        const formattedImages = response.data.flatMap(product => 
-          product.images.map((image, index) => ({
+        // Format product images
+        const productImages = productsResponse.data.flatMap(product => 
+          product.images.map((image) => ({
             image: image.startsWith('http') ? image : `http://localhost:4000${image}`,
-            trekId: product.id,
-            trekName: product.name
+            id: product.id,
+            name: product.name,
+            type: 'product'
           }))
         );
 
-        setImages(formattedImages);
+        // Format outing images
+        const outingImages = outingsResponse.data.flatMap(outing => 
+          outing.images.map((image) => ({
+            image: image.startsWith('http') ? image : `http://localhost:4000${image}`,
+            id: outing.id,
+            name: outing.name,
+            type: 'outing'
+          }))
+        );
+
+        // Combine and shuffle images
+        const allImages = [...productImages, ...outingImages].sort(() => Math.random() - 0.5);
+        setImages(allImages);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching images:", err);
@@ -30,7 +47,7 @@ export const Gallery = () => {
       }
     };
 
-    fetchImages();
+    fetchAllImages();
   }, []);
 
   if (loading) {
@@ -54,40 +71,33 @@ export const Gallery = () => {
       {images.length === 0 ? (
         <p className="text-center text-gray-500">No images found</p>
       ) : (
-        <div 
-          className="grid grid-cols-2 md:grid-cols-3 gap-4"
-          style={{
-            gridAutoRows: "200px",
-          }}
-        >
-          {images.map((imgData, index) => {
-            const colSpan = index % 5 === 0 ? 2 : 1;
-            const rowSpan = index % 7 === 0 ? 2 : 1;
-
-            return (
-              <Link
-                to={`/product/${imgData.trekId}`}
-                key={index}
-                className="block overflow-hidden"
-                style={{
-                  gridColumn: `span ${window.innerWidth < 768 ? 1 : colSpan}`,
-                  gridRow: `span ${window.innerWidth < 768 ? 1 : rowSpan}`,
-                }}
-              >
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full">
-                  <CardContent className="p-0">
-                    <div className="w-full h-full relative">
-                      <img
-                        src={imgData.image}
-                        alt={`${imgData.trekName} Image`}
-                        className="object-cover w-full h-full rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
-                      />
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-8">
+          {images.map((imgData, index) => (
+            <Link
+              to={`/${imgData.type}/${imgData.id}`}
+              key={index}
+              className="block mb-8 break-inside-avoid"
+            >
+              <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 group relative">
+                <CardContent className="p-0">
+                  <div className="relative">
+                    <img
+                      src={imgData.image}
+                      alt={`${imgData.name} Image`}
+                      className="w-full object-cover rounded-lg min-h-[350px] max-h-[500px]"
+                    />
+                    {/* Overlay with name and type */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-70 transition-opacity duration-300 flex flex-col items-center justify-center rounded-lg">
+                      <h3 className="text-white text-2xl font-semibold px-6 text-center">
+                        {imgData.name}
+                      </h3>
+                      
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
       )}
     </div>
