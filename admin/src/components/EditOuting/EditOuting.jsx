@@ -49,7 +49,13 @@ const EditOuting = () => {
     const fetchOutingData = async () => {
       try {
         const response = await axios.get(`http://localhost:4000/alloutings/${id}`);
-        setFormData(response.data);
+        // Convert date strings to Date objects
+        const outingData = {
+          ...response.data,
+          nextDate: new Date(response.data.nextDate),
+          availabledates: response.data.availabledates.map(date => new Date(date)),
+        };
+        setFormData(outingData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching outing:", error);
@@ -58,6 +64,14 @@ const EditOuting = () => {
     };
     fetchOutingData();
   }, [id]);
+
+  // Handle date changes
+  const handleDateChange = (date, field) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: date
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,10 +94,18 @@ const EditOuting = () => {
 
   const updateOuting = async () => {
     try {
+      // Convert Date objects to ISO strings before sending
+      const dataToSend = {
+        ...formData,
+        nextDate: formData.nextDate.toISOString(),
+        availabledates: formData.availabledates.map(date => date.toISOString()),
+      };
+
       const response = await axios.put(
         `http://localhost:4000/updateOuting/${id}`,
-        formData
+        dataToSend
       );
+      
       if (response.data.success) {
         alert("Outing updated successfully!");
         navigate("/outings");
@@ -159,7 +181,31 @@ const EditOuting = () => {
                 </PopoverContent>
               </Popover>
             </div>
+ {/* Next Available Date Calendar */}
+ <div>
+              <label className="block text-sm font-medium mb-1">Next Available Date</label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.nextDate ? format(formData.nextDate, "PPP") : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={formData.nextDate}
+                    onSelect={(date) => handleDateChange(date, "nextDate")}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
+            {/* Available Dates Calendar */}
             <div>
               <label className="block text-sm font-medium mb-1">Available Dates</label>
               <Popover>
@@ -178,14 +224,13 @@ const EditOuting = () => {
                   <Calendar
                     mode="multiple"
                     selected={formData.availabledates}
-                    onSelect={(dates) =>
-                      setFormData((prev) => ({ ...prev, availabledates: dates }))
-                    }
+                    onSelect={(dates) => handleDateChange(dates, "availabledates")}
                     initialFocus
                   />
                 </PopoverContent>
               </Popover>
             </div>
+            
 
             <div>
               <label className="block text-sm font-medium mb-1">Distance from Bangalore</label>
