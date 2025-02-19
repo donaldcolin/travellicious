@@ -7,6 +7,7 @@ import ContactList from '../../components/contactus/ContactUs'
 import ListOutings from '@/components/ListOuting/listOuting'
 import AddOuting from '@/components/addOuting/addOuting'
 import EditProduct from '@/components/EditProduct/EditProduct'
+import EditOuting from '@/components/EditOuting/EditOuting'
 
 const Admin = () => {
   return (
@@ -20,6 +21,7 @@ const Admin = () => {
           <Route path="/addouting" element={<AddOuting/>} />
           <Route path="/contact" element={<ContactList/>} />
           <Route path="/editproduct/:id" element={<EditProduct/>} /> 
+          <Route path="/updateOuting/:id" element={<EditOuting/>} />
 
           <Route path="/buy" element={<div>Buy Page</div>} />
         </Routes>

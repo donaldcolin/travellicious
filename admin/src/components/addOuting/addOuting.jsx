@@ -74,7 +74,7 @@ const AddOuting = () => {
 
   const addOuting = async () => {
     const formdata = new FormData();
-    formData.images.forEach((file) => formdata.append("product", file));
+    formData.images.forEach((file) => formdata.append("images", file));
 
     try {
       const uploadResponse = await fetch("http://localhost:4000/upload", {
