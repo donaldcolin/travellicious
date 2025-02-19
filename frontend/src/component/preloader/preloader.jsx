@@ -1,50 +1,64 @@
 import React from 'react';
+import styled, { keyframes } from 'styled-components';
+import { Plane } from 'lucide-react';
 
+const rotation = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const LoaderWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+`;
+
+const Loader = styled.div`
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border-top: 3px solid #fff;
+  border-right: 3px solid transparent;
+  animation: ${rotation} 1s linear infinite;
+`;
+
+const BrandName = styled.div`
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ddd;
+  margin-top: 1rem;
+`;
 
 const Preloader = () => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90">
+    <LoaderWrapper>
       <div className="flex flex-col items-center gap-6">
         <div className="relative">
           {/* Main spinning loader */}
-          <div className="loader"></div>
+          <Loader />
           
           {/* Centered plane icon */}
-      
+        
         </div>
         
         {/* Brand Name */}
-        <div className="text-2xl font-bold text-gray-300">
+        <BrandName>
           Travellicious
-        </div>
+        </BrandName>
       </div>
-    </div>
+    </LoaderWrapper>
   );
 };
-
-// Add custom styles
-const style = document.createElement('style');
-style.textContent = `
-  .loader {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    display: inline-block;
-    border-top: 3px solid #FFF;
-    border-right: 3px solid transparent;
-    box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-  }
-
-  @keyframes rotation {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
-document.head.appendChild(style);
 
 export default Preloader;

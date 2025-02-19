@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 import { Navbar } from "./component/navbar/navbar";
 import { Footer } from "./component/footer/footer";
 import { Hero } from "./component/hero/hero";
-import { Newsletter } from "./component/newsletter/newsletter";
+
 import Preloader from "./component/preloader/preloader";
 import React from "react";
 import ScrollToTop from "./scrolltotop";
@@ -15,6 +15,7 @@ import { AboutUs } from "./pages/aboutus";
 import { Login } from "./component/loginpage/login";
 import { Gallery } from "./pages/gallery";
 import { Outings } from "./pages/outings";
+import{ OutingPage }from "./pages/OutingProduct";
 
 // Separate AppContent for conditional rendering
 const AppContent = () => {
@@ -36,7 +37,7 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/treks/:productId" element={<ProductPage />} />
-        <Route path="/product/:productId" element={<ProductPage />} />
+        <Route path="/outing/:outingId" element={<OutingPage />} />
         <Route path="*" element={<h1>404: Page Not Found</h1>} /> {/* Handle unknown routes */}
       </Routes>
 

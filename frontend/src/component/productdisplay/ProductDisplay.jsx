@@ -1,30 +1,32 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { MapPin, Mountain, Clock, Footprints, CheckCircle2, ChevronDown, Star, Loader2 } from "lucide-react";
-import ContactSideSheet from "./SideSheet";
-import ImageGallery from "../utils/ImageGallery";
-import ImageModal from "../utils/ImageModal";
-import DateFormatter from "../utils/DateFormatter";
-import { motion, useScroll, useInView } from "framer-motion";
+import React, { useState, useRef, useEffect, Suspense, lazy } from 'react';
+import { Card } from '@/components/ui/card';
+import { MapPin, Mountain, Clock, Footprints, CheckCircle2, ChevronDown, Star, Loader2 } from 'lucide-react';
+import { motion, useScroll, useInView } from 'framer-motion';
 
-const Section = ({ children, className = "", animate = true, innerRef }) => {
+// Lazy loading components
+const ContactSideSheet = lazy(() => import('./SideSheet'));
+const ImageGallery = lazy(() => import('../utils/ImageGallery'));
+const Review = lazy(() => import('./Review'));
+const DateFormatter = lazy(() => import('../utils/DateFormatter'));
+
+const Section = React.memo(({ children, className = '', animate = true, innerRef }) => {
   const sectionRef = useRef(null);
   const isInView = useInView(innerRef || sectionRef, { once: false, amount: 0.1 });
 
   return (
-    <motion.div 
+    <motion.div
       ref={innerRef || sectionRef}
       className={`min-h-screen w-full flex items-center justify-center snap-start ${className}`}
       initial={animate ? { opacity: 0, y: 50 } : {}}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
     >
       {children}
     </motion.div>
   );
-};
+});
 
-const ProgressBar = ({ containerRef }) => {
+const ProgressBar = React.memo(({ containerRef }) => {
   const { scrollYProgress } = useScroll({ container: containerRef });
 
   return (
@@ -33,46 +35,7 @@ const ProgressBar = ({ containerRef }) => {
       style={{ scaleX: scrollYProgress }}
     />
   );
-};
-
-const Review = ({ review, index }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      viewport={{ once: true }}
-    >
-      <Card className="p-4 hover:shadow-lg transition-shadow duration-300">
-        <div className="flex items-center gap-2 mb-4">
-          {[...Array(5)].map((_, j) => (
-            <Star
-              key={j}
-              className={`h-5 w-5 ${j < review.rating ? 'fill-current text-amber-400' : 'text-gray-300'}`}
-            />
-          ))}
-        </div>
-        <p className="text-gray-600 mb-4">{review.comment}</p>
-        <div className="flex items-center gap-3">
-          <img 
-            src={review.user?.avatar || '/placeholder-user.jpg'} 
-            alt={review.user?.name || 'User'}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-          <div>
-            <p className="font-semibold">{review.user?.name || 'Anonymous'}</p>
-            <p className="text-sm text-gray-500">
-              {new Date(review.createdAt).toLocaleDateString('en-US', {
-                month: 'long',
-                year: 'numeric'
-              })}
-            </p>
-          </div>
-        </div>
-      </Card>
-    </motion.div>
-  );
-};
+});
 
 export const ProductDisplay = ({ product }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -90,9 +53,13 @@ export const ProductDisplay = ({ product }) => {
         const response = await fetch('http://localhost:4000/getreviews');
         if (!response.ok) throw new Error('Failed to fetch reviews');
         const data = await response.json();
-        setReviews(Array.isArray(data) ? data : []);
+        if (data.reviews) {
+          setReviews(data.reviews);
+        } else {
+          setError('No reviews found in the response');
+        }
       } catch (err) {
-        console.error("Review fetch error:", err);
+        console.error('Review fetch error:', err);
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -102,35 +69,27 @@ export const ProductDisplay = ({ product }) => {
     fetchReviews();
   }, []);
 
-  const productImages = Array.isArray(product.images) 
-    ? product.images 
+  const productImages = Array.isArray(product.images)
+    ? product.images
     : [product.image || product.images].filter(Boolean);
 
   const scrollToSection = (ref) => {
-    ref.current?.scrollIntoView({ 
-      behavior: "smooth",
-      block: "start"
-    });
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
     <div className="relative">
       <ProgressBar containerRef={scrollContainerRef} />
-      
-      <div 
+
+      <div
         ref={scrollContainerRef}
         className="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth"
       >
         {/* Section 1: Hero */}
         <Section animate={false} className="relative bg-gray-100 z-10">
-          <div className="w-full max-w-6xl  px-2 ">
-            <motion.div 
-              className="relative h-[70vh] w-full mb-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-            >
-              <ImageGallery 
+          <div className="w-full max-w-6xl px-2">
+            <Suspense fallback={<div>Loading images...</div>}>
+              <ImageGallery
                 images={productImages}
                 productName={product.name}
                 onImageClick={() => setIsFullscreen(true)}
@@ -138,24 +97,21 @@ export const ProductDisplay = ({ product }) => {
                 setActiveIndex={setActiveIndex}
                 swiper={swiper}
                 setSwiper={setSwiper}
-                className="w-full h-full rounded-xl overflow-hidden shadow-xl"
+                className="w-full h-full rounded-2xl overflow-hidden shadow-xl"
               />
-            </motion.div>
-
-            <motion.div 
+            </Suspense>
+            <motion.div
               className="text-center space-y-4 relative z-20"
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              <h1 className="text-6xl font-bold text-white drop-shadow-lg ">
-                {product.name}
-              </h1>
-              <motion.button 
+              <motion.button
                 onClick={() => scrollToSection(section2Ref)}
                 className="animate-bounce p-2 rounded-full bg-white shadow-lg hover:shadow-xl"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
+                aria-label="Scroll to details"
               >
                 <ChevronDown className="w-6 h-6 text-blue-600" />
               </motion.button>
@@ -165,13 +121,13 @@ export const ProductDisplay = ({ product }) => {
 
         {/* Section 2: Details */}
         <Section innerRef={section2Ref} className="bg-white">
-          <div className="w-full max-w-6xl mx-auto  px-4 py-28 space-y-16">
+          <div className="w-full max-w-6xl mx-auto px-4 py-28 space-y-16">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
-                { icon: MapPin, label: "Location", value: product.location },
-                { icon: Mountain, label: "Altitude", value: product.altitude || "N/A" },
-                { icon: Clock, label: "Duration", value: product.duration || "N/A" },
-                { icon: Footprints, label: "Grade", value: product.difficulty || "N/A" }
+                { icon: MapPin, label: 'Location', value: product.location },
+                { icon: Mountain, label: 'Altitude', value: product.altitude || 'N/A' },
+                { icon: Clock, label: 'Duration', value: product.duration || 'N/A' },
+                { icon: Footprints, label: 'Grade', value: product.difficulty || 'N/A' },
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -191,7 +147,7 @@ export const ProductDisplay = ({ product }) => {
               ))}
             </div>
 
-            <motion.div 
+            <motion.div
               className="prose max-w-none"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -202,7 +158,7 @@ export const ProductDisplay = ({ product }) => {
             </motion.div>
 
             <div className="grid md:grid-cols-2 gap-12">
-              <motion.div 
+              <motion.div
                 className="space-y-6"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -211,8 +167,8 @@ export const ProductDisplay = ({ product }) => {
                 <h3 className="text-2xl font-bold">Included Services</h3>
                 <div className="space-y-4">
                   {Object.entries(product.services || {}).map(([key, value], index) => (
-                    <motion.div 
-                      key={key} 
+                    <motion.div
+                      key={key}
                       className="flex items-center gap-3"
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -226,7 +182,7 @@ export const ProductDisplay = ({ product }) => {
                 </div>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="space-y-6"
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -235,8 +191,8 @@ export const ProductDisplay = ({ product }) => {
                 <h3 className="text-2xl font-bold">Key Attractions</h3>
                 <div className="space-y-4">
                   {(product.attractions || []).map((attraction, index) => (
-                    <motion.div 
-                      key={index} 
+                    <motion.div
+                      key={index}
                       className="flex items-center gap-3"
                       initial={{ opacity: 0, x: 20 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -251,7 +207,7 @@ export const ProductDisplay = ({ product }) => {
               </motion.div>
             </div>
 
-            <motion.div 
+            <motion.div
               className="bg-gray-50 p-8 rounded-xl shadow-sm"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -260,9 +216,9 @@ export const ProductDisplay = ({ product }) => {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div>
                   <p className="text-lg text-gray-600">Next available date</p>
-                  <h2 className="text-3xl font-bold">
+                  <Suspense fallback={<div>Loading date...</div>}>
                     <DateFormatter date={product.nextdate} />
-                  </h2>
+                  </Suspense>
                 </div>
                 <div>
                   <p className="text-lg text-gray-600">Price per person</p>
@@ -270,7 +226,9 @@ export const ProductDisplay = ({ product }) => {
                     ₹{typeof product.price === 'object' ? product.price.single : product.price}
                   </p>
                 </div>
-                <ContactSideSheet/>
+                <Suspense fallback={<div>Loading contact sheet...</div>}>
+                  <ContactSideSheet />
+                </Suspense>
               </div>
             </motion.div>
           </div>
@@ -279,7 +237,7 @@ export const ProductDisplay = ({ product }) => {
         {/* Section 3: Reviews */}
         <Section className="bg-gray-50">
           <div className="w-full max-w-6xl mx-auto px-4 py-16">
-            <motion.h2 
+            <motion.h2
               className="text-3xl font-bold mb-12 text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -291,17 +249,19 @@ export const ProductDisplay = ({ product }) => {
             {isLoading ? (
               <div className="flex justify-center items-center h-40">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                <p className="ml-4">Loading reviews...</p>
               </div>
             ) : error ? (
               <div className="text-red-500 text-center p-6">
-                Error loading reviews: {error}
+                <p>Error loading reviews: {error}</p>
+                <button onClick={() => setReviews([])} className="text-blue-500 hover:underline">
+                  Retry
+                </button>
               </div>
             ) : reviews.length > 0 ? (
-              <div className="grid md:grid-cols-3 gap-8">
-                {reviews.map((review, index) => (
-                  <Review key={review._id || index} review={review} index={index} />
-                ))}
-              </div>
+              <Suspense fallback={<div>Loading reviews...</div>}>
+                <Review reviews={reviews} />
+              </Suspense>
             ) : (
               <div className="text-center text-gray-500 p-6">
                 No reviews yet. Be the first to share your experience!
@@ -310,18 +270,8 @@ export const ProductDisplay = ({ product }) => {
           </div>
         </Section>
       </div>
-
-      <ImageModal
-        isOpen={isFullscreen}
-        onClose={() => setIsFullscreen(false)}
-        images={productImages}
-        productName={product.name}
-        activeIndex={activeIndex}
-        setActiveIndex={setActiveIndex}
-        swiper={swiper}
-        setSwiper={setSwiper}
-      />
     </div>
   );
 };
 
+export default ProductDisplay;

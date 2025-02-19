@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Youtube } from 'lucide-react';
 import Trek from "../assets/trek.jpeg";
-import mountaintrek from "../assets/mountaintrek.jpg"
-import sunterk from "../assets/suntrek.jpg"
+import mountaintrek from "../assets/mountaintrek.jpg";
+import sunterk from "../assets/suntrek.jpg";
 
 // Import all your images here
 const images = [
-mountaintrek, // Replace with your actual image paths
-Trek,
- sunterk
+  mountaintrek,
+  Trek,
+  sunterk
 ];
 
 export const Hero = () => {
@@ -43,6 +43,8 @@ export const Hero = () => {
             index === currentImageIndex ? 'opacity-100' : 'opacity-0'
           }`}
           style={{ backgroundImage: `url(${image})` }}
+          role="img"
+          aria-label="Hero Background"
         />
       ))}
 
@@ -50,12 +52,13 @@ export const Hero = () => {
       <div className="absolute inset-0 bg-black/40 z-10" />
 
       {/* Social Icons */}
-      <div className="absolute bottom-4 md: bottom-6 right-4 md:right-6 flex gap-4 z-20">
+      <div className="absolute bottom-4 md:bottom-6 right-4 md:right-6 flex gap-4 z-20">
         <a 
           href="https://www.instagram.com" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-white hover:text-white-400 transition-colors duration-300"
+          aria-label="Instagram"
         >
           <Instagram className="w-5 h-5 md:w-6 md:h-6 hover:scale-125 transition-transform duration-300" />
         </a>
@@ -64,6 +67,7 @@ export const Hero = () => {
           target="_blank" 
           rel="noopener noreferrer"
           className="text-white hover:text-white-400 transition-colors duration-300"
+          aria-label="Facebook"
         >
           <Facebook className="w-5 h-5 md:w-6 md:h-6 hover:scale-125 transition-transform duration-300" />
         </a>
@@ -72,6 +76,7 @@ export const Hero = () => {
           target="_blank" 
           rel="noopener noreferrer"
           className="text-white hover:text-white-400 transition-colors duration-300"
+          aria-label="YouTube"
         >
           <Youtube className="w-5 h-5 md:w-6 md:h-6 hover:scale-125 transition-transform duration-300" />
         </a>
@@ -94,6 +99,7 @@ export const Hero = () => {
                      py-2.5 md:py-3 rounded-lg text-sm md:text-base font-semibold 
                      hover:bg-white/20 transform hover:scale-105 transition-all duration-300 
                      focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+            aria-label="Explore Treks"
           >
             Explore Treks
           </button>

@@ -3,6 +3,7 @@ const router = express.Router();
 const Outing = require("../models/outing");
 
 
+
 router.post("/addOuting", async (req, res) => {
   try {
     let products = await Outing.find({});
@@ -86,5 +87,29 @@ router.post("/removeOuting", async (req, res) => {
     res.status(500).json({ success: false, message: "Error removing product" });
   }
 });
+router.get("/allOutings/:id", async (req, res) => {
+  try {
+    const outingId = req.params.id;
+    
+    // Find product by the custom ID field, not MongoDB's _id
+    const outing = await Outing.findOne({ id: Number(outingId) });
 
+    if (!outing) {
+      return res.status(404).json({ 
+        success: false, 
+        message: `Product with ID ${outingId} not found` 
+      });
+    }
+
+    res.json(outing);
+  } catch (error) {
+    console.error(`Error fetching product with ID ${req.params.id}:`, error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching product",
+      error: error.message,
+    });
+  }
+});
+  
 module.exports = router;
