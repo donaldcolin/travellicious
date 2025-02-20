@@ -66,7 +66,7 @@ const ListOutings = () => {
 
   // Navigate to edit outing page
   const handleEdit = (id) => {
-    navigate(`/editouting/${id}`);
+    navigate(`/updateOuting/${id}`);
   };
 
   // Open delete confirmation dialog
