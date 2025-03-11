@@ -18,10 +18,7 @@ const port = 4000;
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
 
 // Cloudinary configuration
 cloudinary.config({
@@ -81,11 +78,11 @@ app.post("/upload", upload, async (req, res) => {
 });
 
 // Routes
-app.use("/", productRoutes);
-app.use("/",outingRoutes);
-app.use("/",contactRoutes);
-app.use("/",userRoutes);
-app.use("/",reviewRoutes);
+app.use("/api", productRoutes);       // Routes now start with /api/
+app.use("/api", outingRoutes);
+app.use("/api", contactRoutes);
+app.use("/api", userRoutes);
+app.use("/api", reviewRoutes);
 
 // Start server
 app.listen(port, () => {

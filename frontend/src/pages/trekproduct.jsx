@@ -9,16 +9,16 @@ export const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { productId } = useParams();
-  
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         // Modify the URL to match your exact backend endpoint
-        const response = await axios.get(`http://localhost:4000/allproducts/${productId}`);
+        const response = await axios.get(`${API_BASE_URL}/allproducts/${productId}`);
         
         // Log the response to understand the data structure
         console.log('Product Data:', response.data);
-        
+       
         setProduct(response.data);
         setLoading(false);
       } catch (error) {

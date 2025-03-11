@@ -40,7 +40,7 @@ const ListOutings = () => {
   useEffect(() => {
     const fetchOutings = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/allOutings');
+        const response = await axios.get('/api/allOutings');
         setOutings(response.data); // Assuming the API returns an array of outings
         setLoading(false);
       } catch (error) {
@@ -55,7 +55,7 @@ const ListOutings = () => {
   // Handle outing removal
   const handleRemove = async () => {
     try {
-      await axios.post('http://localhost:4000/removeouting', { id: deleteId });
+      await axios.post('/api/removeouting', { id: deleteId });
       setOutings(outings.filter(outing => outing.id !== deleteId));
       setIsDeleteDialogOpen(false);
       setDeleteId(null);

@@ -16,6 +16,7 @@ import { Login } from "./component/loginpage/login";
 import { Gallery } from "./pages/gallery";
 import { Outings } from "./pages/outings";
 import{ OutingPage }from "./pages/OutingProduct";
+import PremiumPage from "./pages/premium";
 
 // Separate AppContent for conditional rendering
 const AppContent = () => {
@@ -36,6 +37,7 @@ const AppContent = () => {
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/premium" element={<PremiumPage />} />
         <Route path="/treks/:productId" element={<ProductPage />} />
         <Route path="/outing/:outingId" element={<OutingPage />} />
         <Route path="*" element={<h1>404: Page Not Found</h1>} /> {/* Handle unknown routes */}

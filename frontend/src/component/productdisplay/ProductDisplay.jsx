@@ -46,18 +46,15 @@ export const ProductDisplay = ({ product }) => {
   const [error, setError] = useState(null);
   const section2Ref = useRef(null);
   const scrollContainerRef = useRef(null);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch('http://localhost:4000/getreviews');
+        const response = await fetch(`${API_BASE_URL}/getreviews`);
         if (!response.ok) throw new Error('Failed to fetch reviews');
         const data = await response.json();
-        if (data.reviews) {
-          setReviews(data.reviews);
-        } else {
-          setError('No reviews found in the response');
-        }
+        setReviews(data.reviews || []);
       } catch (err) {
         console.error('Review fetch error:', err);
         setError(err.message);
@@ -65,7 +62,7 @@ export const ProductDisplay = ({ product }) => {
         setIsLoading(false);
       }
     };
-
+  
     fetchReviews();
   }, []);
 

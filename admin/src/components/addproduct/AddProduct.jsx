@@ -103,7 +103,7 @@ const AddProduct = () => {
           images: uploadData.image_urls,
         };
 
-        const addProductResponse = await fetch("http://localhost:4000/addproduct/", {
+        const addProductResponse = await fetch('api/addproduct/', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

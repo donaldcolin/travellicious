@@ -39,7 +39,7 @@ const ListOuting = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/allproducts');
+        const response = await axios.get('/api/allproducts');
         setProducts(response.data);
         setLoading(false);
       } catch (error) {
@@ -53,7 +53,7 @@ const ListOuting = () => {
 
   const handleRemove = async () => {
     try {
-      await axios.post('http://localhost:4000/removeproduct', { id: deleteId });
+      await axios.post('/api/removeproduct', { id: deleteId });
       setProducts(products.filter(product => product.id !== deleteId));
       setIsDeleteDialogOpen(false);
       setDeleteId(null);

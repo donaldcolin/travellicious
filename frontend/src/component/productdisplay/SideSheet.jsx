@@ -57,12 +57,12 @@ const ContactSideSheet = () => {
       setError(validationError);
       return;
     }
-
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     try {
       setError(null);
       setMessage(null);
 
-      const response = await fetch("http://localhost:4000/contact", {
+      const response = await fetch(`${API_BASE_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

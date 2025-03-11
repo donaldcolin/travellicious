@@ -61,7 +61,7 @@ const ContactList = () => {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await fetch("http://localhost:4000/allcontact");
+        const response = await fetch('/api/allcontact');
         const data = await response.json();
         
         if (Array.isArray(data)) {
@@ -100,7 +100,7 @@ const ContactList = () => {
   const handleStatusChange = async (_id, newStatus) => {
     try {
       // Make the API call to update contact status
-      const response = await fetch("http://localhost:4000/updatecontact", {
+      const response = await fetch('/api/updatecontact', {
         method: "PUT", // Use PUT for updates instead of POST
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +145,7 @@ const ContactList = () => {
   };
   const handleRemove = async (_id) => {
     try {
-      const response = await fetch("http://localhost:4000/removecontact", {
+      const response = await fetch("/api/removecontact", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

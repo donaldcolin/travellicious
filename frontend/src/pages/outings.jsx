@@ -55,12 +55,12 @@ export const Outings = () => {
   const [outings, setOutings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const fetchOutings = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:4000/allOutings');
+      const response = await axios.get(`${API_BASE_URL}/allOutings`);
       setOutings(response.data);
       setLoading(false);
     } catch (error) {

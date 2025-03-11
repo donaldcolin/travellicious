@@ -7,19 +7,19 @@ export const Gallery = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchAllImages = async () => {
       try {
         const [productsResponse, outingsResponse] = await Promise.all([
-          axios.get('http://localhost:4000/allproducts'),
-          axios.get('http://localhost:4000/allOutings')
+          axios.get(`${API_BASE_URL}/allproducts`),
+          axios.get(`${API_BASE_URL}/allOutings`)
         ]);
         
         // Format product images
         const productImages = productsResponse.data.flatMap(product => 
           product.images.map((image) => ({
-            image: image.startsWith('http') ? image : `http://localhost:4000${image}`,
+            image: image.startsWith('http') ? image : `${API_BASE_URL}${image}`,
             id: product.id,
             name: product.name,
             type: 'product'
@@ -29,7 +29,7 @@ export const Gallery = () => {
         // Format outing images
         const outingImages = outingsResponse.data.flatMap(outing => 
           outing.images.map((image) => ({
-            image: image.startsWith('http') ? image : `http://localhost:4000${image}`,
+            image: image.startsWith('http') ? image : `${API_BASE_URL}${image}`,
             id: outing.id,
             name: outing.name,
             type: 'outing'

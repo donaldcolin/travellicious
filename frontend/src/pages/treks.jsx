@@ -55,12 +55,12 @@ export const Treks = () => {
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const fetchTreks = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:4000/allproducts');
+      const response = await axios.get(`${API_BASE_URL}/allproducts`);
       setTreks(response.data);
       setLoading(false);
     } catch (error) {

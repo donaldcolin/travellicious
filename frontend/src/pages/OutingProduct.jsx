@@ -9,12 +9,11 @@ export const OutingPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { outingId } = useParams();
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchOuting = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/allOutings/${outingId}`);
-
+        const response = await axios.get(`${API_BASE_URL}/allOutings/${outingId}`);
         console.log('Outing Data:', response.data);
         setOuting(response.data);
         setLoading(false);
