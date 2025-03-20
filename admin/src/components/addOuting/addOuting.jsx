@@ -71,13 +71,13 @@ const AddOuting = () => {
       images: filesArray.map((file) => URL.createObjectURL(file)), // Temporary URLs for preview
     }));
   };
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const addOuting = async () => {
     const formdata = new FormData();
     formData.images.forEach((file) => formdata.append("images", file));
 
     try {
-      const uploadResponse = await fetch("http://localhost:4000/upload", {
+      const uploadResponse = await fetch(`${API_BASE_URL}/upload`, {
         method: "POST",
         body: formdata,
       });
@@ -89,7 +89,7 @@ const AddOuting = () => {
           images: uploadData.image_urls,
         };
 
-        const response = await fetch("http://localhost:4000/addOuting", {
+        const response = await fetch(`${API_BASE_URL}/addOuting`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

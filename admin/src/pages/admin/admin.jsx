@@ -8,6 +8,7 @@ import ListOutings from '@/components/ListOuting/listOuting'
 import AddOuting from '@/components/addOuting/addOuting'
 import EditProduct from '@/components/EditProduct/EditProduct'
 import EditOuting from '@/components/EditOuting/EditOuting'
+import { Growth } from '@/components/growth/growth'
 
 const Admin = () => {
   return (
@@ -22,8 +23,8 @@ const Admin = () => {
           <Route path="/contact" element={<ContactList/>} />
           <Route path="/editproduct/:id" element={<EditProduct/>} /> 
           <Route path="/updateOuting/:id" element={<EditOuting/>} />
-
           <Route path="/buy" element={<div>Buy Page</div>} />
+          <Route path="/growth" element={<Growth/>} />
         </Routes>
       </div>
     </div>

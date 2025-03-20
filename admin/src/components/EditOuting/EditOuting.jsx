@@ -44,11 +44,11 @@ const EditOuting = () => {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchOutingData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/alloutings/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/alloutings/${id}`);
         // Convert date strings to Date objects
         const outingData = {
           ...response.data,
@@ -102,7 +102,7 @@ const EditOuting = () => {
       };
 
       const response = await axios.put(
-        `http://localhost:4000/updateOuting/${id}`,
+        `${API_BASE_URL}/updateOuting/${id}`,
         dataToSend
       );
       

@@ -1,3 +1,6 @@
 node_modules/
 backend/upload/images/
-backend/.env
+backend/.env/
+frontend/.env/
+frontend/.env.production/
+admin/.env

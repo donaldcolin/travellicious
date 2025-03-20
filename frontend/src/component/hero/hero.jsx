@@ -1,21 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Youtube } from 'lucide-react';
-import Trek from "../assets/trek.jpeg";
-import mountaintrek from "../assets/mountaintrek.jpg";
-import sunterk from "../assets/suntrek.jpg";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Import all your images here
+// Define images with proper syntax
 const images = [
-  mountaintrek,
-  Trek,
-  sunterk
+  "https://res.cloudinary.com/dt9apeyvy/image/upload/v1742245043/mountaintrek_qkcxyi.jpg",
+  "https://res.cloudinary.com/dt9apeyvy/image/upload/v1742244979/trek_wd6sls.jpg",
+  "https://res.cloudinary.com/dt9apeyvy/image/upload/v1742245041/suntrek_izdbup.jpg"
 ];
 
 export const Hero = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
+  // Preload images to avoid flashing
   useEffect(() => {
+    const imagePromises = images.map((src) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+    });
+
+    Promise.all(imagePromises)
+      .then(() => setImagesLoaded(true))
+      .catch(err => console.error("Failed to preload images", err));
+  }, []);
+
+  // Start the rotation only after images are loaded
+  useEffect(() => {
+    if (!imagesLoaded) return;
+    
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
@@ -23,7 +41,7 @@ export const Hero = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [imagesLoaded]);
 
   const handleScrollToTreks = () => {
     const heroHeight = document.querySelector('.hero').offsetHeight;
@@ -34,19 +52,34 @@ export const Hero = () => {
   };
 
   return (
-    <div className="hero relative h-screen w-full flex justify-center items-center overflow-hidden">
-      {/* Background Images */}
-      {images.map((image, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 bg-cover bg-center z-0 transition-opacity duration-1000 ease-in-out ${
-            index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ backgroundImage: `url(${image})` }}
-          role="img"
-          aria-label="Hero Background"
-        />
-      ))}
+    <div className="hero relative h-screen w-full flex justify-center items-center overflow-hidden bg-gray-900">
+      {/* Background Images with improved AnimatePresence */}
+      {imagesLoaded && (
+        <div className="absolute inset-0 z-0">
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={currentImageIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ 
+                duration: 1.5, 
+                ease: "easeInOut",
+                // Increase crossfade overlap
+                exit: { duration: 1.5 } 
+              }}
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ 
+                backgroundImage: `url(${images[currentImageIndex]})`,
+                // This ensures an image is always visible during transitions
+                zIndex: currentImageIndex 
+              }}
+              role="img"
+              aria-label="Hero Background"
+            />
+          </AnimatePresence>
+        </div>
+      )}
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10" />
@@ -54,7 +87,7 @@ export const Hero = () => {
       {/* Social Icons */}
       <div className="absolute bottom-4 md:bottom-6 right-4 md:right-6 flex gap-4 z-20">
         <a 
-          href="https://www.instagram.com" 
+          href="https://www.instagram.com/aldified" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-white hover:text-white-400 transition-colors duration-300"
@@ -83,39 +116,65 @@ export const Hero = () => {
       </div>
 
       {/* Hero Content */}
-      <div className="relative z-20 text-center px-4 md:px-0 max-w-4xl mx-auto">
-        <h1 className="font-ephesis text-4xl md:text-6xl lg:text-8xl font mb-4 md:mb-6 text-white">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="relative z-20 text-center px-4 md:px-0 max-w-4xl mx-auto"
+      >
+        <motion.h1 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="font-ephesis text-4xl md:text-6xl lg:text-8xl font mb-4 md:mb-6 text-white"
+        >
           Welcome to Travellicious
-        </h1>
-        <p className="text-lg md:text-xl text-white/90 mb-8 md:mb-10 max-w-2xl mx-auto">
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="text-lg md:text-xl text-white/90 mb-8 md:mb-10 max-w-2xl mx-auto"
+        >
           Discover amazing destinations and unforgettable experiences.
-        </p>
+        </motion.p>
         
         {/* Updated Buttons */}
-        <div className="flex flex-col md:flex-row gap-4 md:gap-8 justify-center items-center">
-          <button 
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="flex flex-col md:flex-row gap-4 md:gap-8 justify-center items-center"
+        >
+          <motion.button 
+            whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleScrollToTreks}
-            className="w-48 md:w-auto bg-transparent text-white border-2 border-gray px-6 md:px-8 
+            className="w-48 md:w-auto bg-transparent text-white border-2 border-white px-6 md:px-8 
                      py-2.5 md:py-3 rounded-lg text-sm md:text-base font-semibold 
-                     hover:bg-white/20 transform hover:scale-105 transition-all duration-300 
-                     focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+                     transition-all duration-300 focus:outline-none focus:ring-2 
+                     focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
             aria-label="Explore Treks"
           >
             Explore Treks
-          </button>
+          </motion.button>
           <Link 
             to="/outings"
             className="w-48 md:w-auto"
           >
-            <button className="w-full bg-transparent text-white border-2 border-white px-6 md:px-8 
-                             py-2.5 md:py-3 rounded-lg text-sm md:text-base font-semibold 
-                             hover:bg-white/20 transform hover:scale-105 transition-all duration-300 
-                             focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2">
+            <motion.button 
+              whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full bg-transparent text-white border-2 border-white px-6 md:px-8 
+                           py-2.5 md:py-3 rounded-lg text-sm md:text-base font-semibold 
+                           transition-all duration-300 focus:outline-none focus:ring-2 
+                           focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+            >
               Explore Outings
-            </button>
+            </motion.button>
           </Link>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

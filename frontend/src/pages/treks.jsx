@@ -50,12 +50,13 @@ const TrekCard = ({ trek }) => {
   );
 };
 
-// Main Treks Component
-export const Treks = () => {
+// Trek Content Component - This handles loading states
+const TrekContent = () => {
   const [treks, setTreks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  
   const fetchTreks = async () => {
     setLoading(true);
     setError(null);
@@ -74,47 +75,65 @@ export const Treks = () => {
     fetchTreks();
   }, []);
 
-  if (loading) return (
-    <div className="container mx-auto px-4 grid grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...Array(6)].map((_, index) => <TrekSkeleton key={index} />)}
-    </div>
-  );
-
-  if (error) return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">Failed to Load Treks</h2>
-        <p className="text-gray-600 mb-6">Unable to fetch adventure details. Please check your connection.</p>
-        <Button 
-          onClick={fetchTreks} 
-          className="flex items-center justify-center gap-2 mx-auto"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Reload Treks
-        </Button>
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+        {[...Array(6)].map((_, index) => <TrekSkeleton key={index} />)}
       </div>
-    </div>
-  );
+    );
+  }
 
-  if (treks.length === 0) return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">No Treks Available</h2>
-        <p className="text-gray-600 mb-6">We couldn't find any trek adventures at the moment.</p>
-        <Button 
-          onClick={fetchTreks} 
-          className="flex items-center justify-center gap-2 mx-auto"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Try Again
-        </Button>
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Failed to Load Treks</h2>
+          <p className="text-gray-600 mb-6">Unable to fetch adventure details. Please check your connection.</p>
+          <Button 
+            onClick={fetchTreks} 
+            className="flex items-center justify-center gap-2 mx-auto"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Reload Treks
+          </Button>
+        </div>
       </div>
+    );
+  }
+
+  if (treks.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">No Treks Available</h2>
+          <p className="text-gray-600 mb-6">We couldn't find any trek adventures at the moment.</p>
+          <Button 
+            onClick={fetchTreks} 
+            className="flex items-center justify-center gap-2 mx-auto"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+      {treks.map((trek) => (
+        <TrekCard key={trek.id} trek={trek} />
+      ))}
     </div>
   );
+};
 
+// Main Treks Component
+export const Treks = () => {
   return (
     <div id="treks-section" className="bg-gray-50 min-h-screen py-16">
       <div className="container mx-auto px-4">
+        {/* Static heading section that's always visible */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold tracking-tight mb-4">
             Explore Adventures Near Bangalore
@@ -124,11 +143,8 @@ export const Treks = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
-          {treks.map((trek) => (
-            <TrekCard key={trek.id} trek={trek} />
-          ))}
-        </div>
+        {/* Dynamic trek content that loads with skeleton */}
+        <TrekContent />
       </div>
     </div>
   );

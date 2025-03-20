@@ -25,6 +25,12 @@ const userSchema = new Schema({
         required: [true, 'Password is required'],
         minlength: [8, 'Password must be at least 8 characters long'],
         select: false // Won't be included in queries by default
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+        required: true
     }
 }, {
     timestamps: true // Adds createdAt and updatedAt fields automatically

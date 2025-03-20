@@ -57,11 +57,11 @@ const ContactList = () => {
       return "N/A";
     }
   };
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await fetch('/api/allcontact');
+        const response = await fetch(`${API_BASE_URL}/allcontact`);
         const data = await response.json();
         
         if (Array.isArray(data)) {
@@ -100,7 +100,7 @@ const ContactList = () => {
   const handleStatusChange = async (_id, newStatus) => {
     try {
       // Make the API call to update contact status
-      const response = await fetch('/api/updatecontact', {
+      const response = await fetch(`${API_BASE_URL}/updatecontact`, {
         method: "PUT", // Use PUT for updates instead of POST
         headers: {
           "Content-Type": "application/json",
@@ -145,7 +145,7 @@ const ContactList = () => {
   };
   const handleRemove = async (_id) => {
     try {
-      const response = await fetch("/api/removecontact", {
+      const response = await fetch(`${API_BASE_URL}/removecontact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

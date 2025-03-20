@@ -43,11 +43,11 @@ const EditProduct = () => {
   const [submitError, setSubmitError] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/allproducts/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/allproducts/${id}`);
         // Convert date strings to Date objects
         const productData = {
           ...response.data,
@@ -107,7 +107,7 @@ const EditProduct = () => {
     setSubmitError("");
 
     try {
-      await axios.put(`http://localhost:4000/updateproduct/${id}`, product);
+      await axios.put(`${API_BASE_URL}/updateproduct/${id}`, product);
       navigate("/listproduct");
     } catch (err) {
       setSubmitError("Failed to update product");

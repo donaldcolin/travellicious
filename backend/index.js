@@ -78,7 +78,7 @@ app.post("/upload", upload, async (req, res) => {
 });
 
 // Routes
-app.use("/api", productRoutes);       // Routes now start with /api/
+app.use("/api", productRoutes);      
 app.use("/api", outingRoutes);
 app.use("/api", contactRoutes);
 app.use("/api", userRoutes);

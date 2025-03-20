@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user'); // Adjust path as needed
+const User = require('../models/user');
+const auth = require('../middleware/auth'); 
 
 // Register a new user
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
 
         // Check if user already exists
         let user = await User.findOne({ email });
@@ -22,7 +23,8 @@ router.post('/register', async (req, res) => {
         user = new User({
             name,
             email,
-            password
+            password,
+            role
         });
 
         // Hash password
@@ -52,7 +54,8 @@ router.post('/register', async (req, res) => {
                     user: {
                         id: user.id,
                         name: user.name,
-                        email: user.email
+                        email: user.email,
+                        role: user.role
                     }
                 });
             }
@@ -109,7 +112,8 @@ router.post('/login', async (req, res) => {
                     user: {
                         id: user.id,
                         name: user.name,
-                        email: user.email
+                        email: user.email,
+                        role: user.role
                     }
                 });
             }
@@ -123,14 +127,144 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Get current user (Protected route example)
-router.get('/me', async (req, res) => {
+// Get current user (Protected route)
+router.get('/me', auth, async (req, res) => {  // Added auth middleware here
     try {
         const user = await User.findById(req.user.id).select('-password');
         res.json({
             success: true,
             message: 'User data retrieved successfully',
             user
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
+// Update user profile (Protected route)
+router.put('/update-profile', auth, async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        
+        // Find user by id (from auth middleware)
+        const user = await User.findById(req.user.id);
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+        
+        // Update fields if provided
+        if (name) user.name = name;
+        if (email) {
+            // Check if new email already exists (if changing email)
+            if (email !== user.email) {
+                const emailExists = await User.findOne({ email });
+                if (emailExists) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Email already in use'
+                    });
+                }
+                user.email = email;
+            }
+        }
+        
+        // Update password if provided
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+        
+        // Save updated user
+        await user.save();
+        
+        res.json({
+            success: true,
+            message: 'Profile updated successfully',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+});
+
+// Admin route to update any user
+router.put('/users/:id', auth, async (req, res) => {
+    try {
+        // Check if the requester is an admin
+        const requester = await User.findById(req.user.id);
+        if (!requester || requester.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied. Admin privileges required.'
+            });
+        }
+        
+        const userId = req.params.id;
+        const { name, email, password, role } = req.body;
+        
+        // Find user by id
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+        
+        // Update fields if provided
+        if (name) user.name = name;
+        if (role) user.role = role;
+        
+        if (email) {
+            // Check if new email already exists (if changing email)
+            if (email !== user.email) {
+                const emailExists = await User.findOne({ email });
+                if (emailExists) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Email already in use'
+                    });
+                }
+                user.email = email;
+            }
+        }
+        
+        // Update password if provided
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+        
+        // Save updated user
+        await user.save();
+        
+        res.json({
+            success: true,
+            message: 'User updated successfully',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         });
     } catch (err) {
         console.error(err.message);

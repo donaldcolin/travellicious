@@ -1,32 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-
-} from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {AlertDialog,AlertDialogAction,AlertDialogCancel,AlertDialogContent,AlertDialogDescription,AlertDialogFooter,AlertDialogHeader,AlertDialogTitle,} from "@/components/ui/alert-dialog";
+import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 
 const ListOuting = () => {
@@ -39,7 +17,7 @@ const ListOuting = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('/api/allproducts');
+        const response = await axios.get(`${API_BASE_URL}/allproducts`);
         setProducts(response.data);
         setLoading(false);
       } catch (error) {
@@ -50,10 +28,10 @@ const ListOuting = () => {
 
     fetchProducts();
   }, []);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const handleRemove = async () => {
     try {
-      await axios.post('/api/removeproduct', { id: deleteId });
+      await axios.post(`${API_BASE_URL}/removeproduct`, { id: deleteId });
       setProducts(products.filter(product => product.id !== deleteId));
       setIsDeleteDialogOpen(false);
       setDeleteId(null);

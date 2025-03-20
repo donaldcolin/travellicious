@@ -85,13 +85,13 @@ const AddProduct = () => {
       images: [...prev.images, ...filesArray],
     }));
   };
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const addProduct = async () => {
     const formdata = new FormData();
     formData.images.forEach((file) => formdata.append("product", file));
 
     try {
-      const uploadResponse = await fetch("http://localhost:4000/upload", {
+      const uploadResponse = await fetch(`${API_BASE_URL}/upload`, {
         method: "POST",
         body: formdata,
       });
@@ -103,7 +103,7 @@ const AddProduct = () => {
           images: uploadData.image_urls,
         };
 
-        const addProductResponse = await fetch('api/addproduct/', {
+        const addProductResponse = await fetch(`${API_BASE_URL}/addproduct`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

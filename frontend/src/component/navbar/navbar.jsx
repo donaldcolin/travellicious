@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingBag, User } from 'lucide-react';
 import logobg from '../assets/logobg.png';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export const Navbar = () => {
   const location = useLocation();
@@ -65,12 +66,12 @@ export const Navbar = () => {
 
           {/* Action Buttons - Reduced spacing */}
           <div className="hidden md:flex items-center space-x-6">
-            <button className="text-white/70 hover:text-white transition duration-300">
+          <Link to="/login" className="text-white/70 hover:text-white transition duration-300">
               <User className="h-4 w-4" />
-            </button>
-            <button className="text-white/70 hover:text-white transition duration-300">
+          </Link>
+            <Link to="/cart" className="text-white/70 hover:text-white transition duration-300">
               <ShoppingBag className="h-4 w-4" />
-            </button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -88,35 +89,48 @@ export const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation - Increased blur effect */}
-        {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 mt-2 bg-black/40 backdrop-blur-xl rounded-xl">
-            <div className="px-4 py-3 space-y-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={closeMenu}
-                  className={`block text-sm font-medium transition duration-300 ${
-                    menu === item.path.substring(1)
-                      ? 'text-white'
-                      : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <div className="flex items-center space-x-4 pt-2">
-                <button className="text-white/70 hover:text-white transition duration-300">
-                  <User className="h-4 w-4" />
-                </button>
-                <button className="text-white/70 hover:text-white transition duration-300">
-                  <ShoppingBag className="h-4 w-4" />
-                </button>
+        {/* Mobile Navigation - Enhanced frosted glass effect */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden absolute top-full left-0 right-0 mt-2 bg-black/20 backdrop-blur-md rounded-xl border border-white/10 shadow-lg overflow-hidden"
+            >
+              <div className="px-4 py-4 space-y-3">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={closeMenu}
+                    className={`block py-2 text-sm font-medium transition duration-300 ${
+                      menu === item.path.substring(1)
+                        ? 'text-white'
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span className={`w-0 h-0.5 bg-white transition-all duration-300 mr-0 ${
+                        menu === item.path.substring(1) ? 'w-3 mr-2' : 'w-0'
+                      }`} />
+                      {item.label}
+                    </div>
+                  </Link>
+                ))}
+                <div className="flex items-center space-x-4 pt-3 mt-2 border-t border-white/10">
+                  <Link to="/login" className="text-white/70 hover:text-white transition duration-300 py-2" onClick={closeMenu}>
+                    <User className="h-4 w-4" />
+                  </Link>
+                  <Link to="/cart" className="text-white/70 hover:text-white transition duration-300 py-2" onClick={closeMenu}>
+                    <ShoppingBag className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </nav>
   );

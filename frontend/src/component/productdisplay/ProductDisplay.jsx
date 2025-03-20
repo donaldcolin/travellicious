@@ -233,7 +233,7 @@ export const ProductDisplay = ({ product }) => {
 
         {/* Section 3: Reviews */}
         <Section className="bg-gray-50">
-          <div className="w-full max-w-6xl mx-auto px-4 py-16">
+          <div className="w-full max-w-6xl mx-auto px-4 py-14">
             <motion.h2
               className="text-3xl font-bold mb-12 text-center"
               initial={{ opacity: 0, y: 20 }}

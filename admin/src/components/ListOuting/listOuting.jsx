@@ -35,12 +35,12 @@ const ListOutings = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // Fetch outings from the backend
   useEffect(() => {
     const fetchOutings = async () => {
       try {
-        const response = await axios.get('/api/allOutings');
+        const response = await axios.get(`${API_BASE_URL}/allOutings`);
         setOutings(response.data); // Assuming the API returns an array of outings
         setLoading(false);
       } catch (error) {
@@ -55,7 +55,7 @@ const ListOutings = () => {
   // Handle outing removal
   const handleRemove = async () => {
     try {
-      await axios.post('/api/removeouting', { id: deleteId });
+      await axios.post(`${API_BASE_URL}/removeouting`, { id: deleteId });
       setOutings(outings.filter(outing => outing.id !== deleteId));
       setIsDeleteDialogOpen(false);
       setDeleteId(null);

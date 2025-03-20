@@ -11,7 +11,6 @@ const Review = ({ reviews }) => {
   // Transform reviews into the format expected by AnimatedTestimonials
   const testimonials = reviews.map(review => ({
     _id: review._id,
-    src: review.avatarUrl || "https://placehold.co/600x400",
     name: review.name,
     designation: `Traveled in ${review.date || 'Unknown'}`,
     quote: review.review,
