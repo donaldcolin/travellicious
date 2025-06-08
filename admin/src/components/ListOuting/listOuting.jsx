@@ -50,7 +50,7 @@ const ListOutings = () => {
     };
 
     fetchOutings();
-  }, []);
+  }, [API_BASE_URL]);
 
   // Handle outing removal
   const handleRemove = async () => {
@@ -77,14 +77,14 @@ const ListOutings = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-2rem)] ml-[280px] p-8">
+      <div className="flex items-center justify-center min-h-[calc(100vh-2rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
       </div>
     );
   }
 
   return (
-    <div className="ml-[280px] p-8">
+    <div className="p-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Outings</h1>

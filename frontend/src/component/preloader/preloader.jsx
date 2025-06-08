@@ -107,8 +107,8 @@ const Preloader = () => {
       });
     }, 300);
     
-    // Event listeners for asset loading
-    const handleLoad = () => {
+    // Listen for hero images loaded event
+    const handleHeroImagesLoaded = () => {
       clearInterval(progressInterval);
       setProgress(100);
       
@@ -118,35 +118,42 @@ const Preloader = () => {
       }, 500);
     };
     
-    // Check if page is already loaded
-    if (document.readyState === 'complete') {
-      handleLoad();
-    } else {
-      window.addEventListener('load', handleLoad);
-    }
+    window.addEventListener('heroImagesLoaded', handleHeroImagesLoaded);
     
-    // Add listener for images and other resources
-    const resourcesLoaded = () => {
-      const resources = Array.from(document.images);
-      const loadedResources = resources.filter(img => img.complete).length;
-      const totalResources = resources.length;
-      
-      if (totalResources > 0) {
-        const resourceProgress = (loadedResources / totalResources) * 50;
-        setProgress(prev => Math.max(prev, 40 + resourceProgress));
+    // Fallback to standard window load if heroImagesLoaded event doesn't fire
+    const handleWindowLoad = () => {
+      if (document.readyState === 'complete' && progress < 100) {
+        // Only proceed if heroImagesLoaded hasn't fired yet
+        setProgress(95);
+        
+        // Give a little more time for hero images to load
+        setTimeout(() => {
+          if (progress < 100) {
+            clearInterval(progressInterval);
+            setProgress(100);
+            
+            setTimeout(() => {
+              setLoading(false);
+            }, 500);
+          }
+        }, 2000);
       }
     };
     
-    // Check resources periodically
-    const resourceInterval = setInterval(resourcesLoaded, 200);
+    // Check if page is already loaded
+    if (document.readyState === 'complete') {
+      handleWindowLoad();
+    } else {
+      window.addEventListener('load', handleWindowLoad);
+    }
     
     return () => {
-      window.removeEventListener('load', handleLoad);
+      window.removeEventListener('heroImagesLoaded', handleHeroImagesLoaded);
+      window.removeEventListener('load', handleWindowLoad);
       clearInterval(messageInterval);
       clearInterval(progressInterval);
-      clearInterval(resourceInterval);
     };
-  }, []);
+  }, [progress]);
 
   return (
     <AnimatePresence>

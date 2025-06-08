@@ -40,6 +40,8 @@ const ContactList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const formatDate = (dateString) => {
@@ -78,7 +80,7 @@ const ContactList = () => {
     };
   
     fetchContacts();
-  }, []);
+  }, [API_BASE_URL]);
 
   const handleCopy = (phone, id) => {
     navigator.clipboard.writeText(phone);
@@ -143,23 +145,31 @@ const ContactList = () => {
       });
     }
   };
-  const handleRemove = async (_id) => {
+
+  const openDeleteDialog = (id) => {
+    setDeleteId(id);
+    setIsDeleteDialogOpen(true);
+  };
+  
+  const handleRemove = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/removecontact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ _id }),
+        body: JSON.stringify({ _id: deleteId }),
       });
 
       if (response.ok) {
-        setContacts(contacts.filter((contact) => contact._id !== _id));
+        setContacts(contacts.filter((contact) => contact._id !== deleteId));
         toast({
           title: "Contact removed",
           description: "Contact has been removed successfully",
           duration: 2000,
         });
+        setIsDeleteDialogOpen(false);
+        setDeleteId(null);
       } else {
         throw new Error('Failed to remove contact');
       }
@@ -176,16 +186,16 @@ const ContactList = () => {
 
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center min-h-[calc(100vh-2rem)]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
-        <Card className="w-96">
+      <div className="p-4">
+        <Card className="w-full max-w-md mx-auto">
           <CardHeader>
             <CardTitle className="text-destructive">Error</CardTitle>
           </CardHeader>
@@ -209,11 +219,11 @@ const ContactList = () => {
   };
 
   return (
-    <div className="ml-[280px] p-8">
+    <div className="p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Contacted</h1>
+        <h1 className="text-3xl font-bold">Contacted Inquiries</h1>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto border rounded-lg">
         <Table>
           <TableHeader>
             <TableRow>
@@ -259,65 +269,62 @@ const ContactList = () => {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    <span className="text-sm">{formatDate(contact.date)}</span>
+                    <span className="text-sm">{formatDate(contact.createdAt || contact.date)}</span>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                    <div className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getStatusColor(contact.status)}`}>
-                      {contact.status || 'Pending'}
-                    </div>
-                    <Select
-                      value={contact.status || 'Pending'}
-                      onValueChange={(value) => handleStatusChange(contact._id, value)}
-                    >
-                      <SelectTrigger className="w-[130px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Pending">Pending</SelectItem>
-                        <SelectItem value="Contacted">Contacted</SelectItem>
-                        <SelectItem value="Resolved">Resolved</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Select
+                    defaultValue={contact.status || 'Pending'}
+                    onValueChange={(value) => handleStatusChange(contact._id, value)}
+                  >
+                    <SelectTrigger className={`w-[180px] ${getStatusColor(contact.status || 'Pending')}`}>
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Contacted">Contacted</SelectItem>
+                      <SelectItem value="Resolved">Resolved</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell className="text-right">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Remove Contact</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to remove this contact? This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleRemove(contact._id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Remove
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openDeleteDialog(contact._id)}
+                    className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Contact</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this contact? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleRemove}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
-export default ContactList
+
+export default ContactList;

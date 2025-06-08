@@ -3,31 +3,87 @@ import { Link } from "react-router-dom";
 import { Instagram, Facebook, Youtube } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 
-// Define images with proper syntax
+// Define images with proper syntax and optimization parameters for Cloudinary
+// Adding f_auto and q_auto parameters for automatic format and quality optimization
 const images = [
-  "https://res.cloudinary.com/dt9apeyvy/image/upload/v1742245043/mountaintrek_qkcxyi.jpg",
-  "https://res.cloudinary.com/dt9apeyvy/image/upload/v1742244979/trek_wd6sls.jpg",
-  "https://res.cloudinary.com/dt9apeyvy/image/upload/v1742245041/suntrek_izdbup.jpg"
+  "https://res.cloudinary.com/dt9apeyvy/image/upload/f_auto,q_auto,w_1920/v1742245043/mountaintrek_qkcxyi.jpg",
+  "https://res.cloudinary.com/dt9apeyvy/image/upload/f_auto,q_auto,w_1920/v1742244979/trek_wd6sls.jpg",
+  "https://res.cloudinary.com/dt9apeyvy/image/upload/f_auto,q_auto,w_1920/v1742245041/suntrek_izdbup.jpg"
 ];
+
+// Backup image in case Cloudinary fails
+const fallbackImage = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80";
 
 export const Hero = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [loadingError, setLoadingError] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
-  // Preload images to avoid flashing
+  // Preload images with better error handling and timeout
   useEffect(() => {
-    const imagePromises = images.map((src) => {
+    let loadedCount = 0;
+    const totalImages = images.length;
+    
+    // Set a timeout to prevent waiting forever if images are slow
+    const timeoutId = setTimeout(() => {
+      if (!imagesLoaded) {
+        console.warn("Image loading timeout - using fallback");
+        setLoadingError(true);
+        setImagesLoaded(true);
+        
+        // Dispatch event to notify preloader even if we're using fallback
+        const heroLoadedEvent = new Event('heroImagesLoaded');
+        window.dispatchEvent(heroLoadedEvent);
+      }
+    }, 10000); // 10 second timeout
+    
+    const imagePromises = images.map((src, index) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
+        
+        img.onload = () => {
+          loadedCount++;
+          setLoadingProgress(Math.floor((loadedCount / totalImages) * 100));
+          resolve();
+        };
+        
+        img.onerror = () => {
+          console.error(`Failed to load image: ${src}`);
+          reject(new Error(`Failed to load image: ${src}`));
+        };
+        
         img.src = src;
-        img.onload = resolve;
-        img.onerror = reject;
       });
     });
 
+    // Also preload fallback image
+    const fallbackImg = new Image();
+    fallbackImg.src = fallbackImage;
+
     Promise.all(imagePromises)
-      .then(() => setImagesLoaded(true))
-      .catch(err => console.error("Failed to preload images", err));
+      .then(() => {
+        clearTimeout(timeoutId);
+        setImagesLoaded(true);
+        setLoadingError(false);
+        
+        // Dispatch custom event to notify the preloader that hero images are loaded
+        const heroLoadedEvent = new Event('heroImagesLoaded');
+        window.dispatchEvent(heroLoadedEvent);
+        
+        console.log('Hero images loaded, event dispatched');
+      })
+      .catch(err => {
+        console.error("Failed to preload images", err);
+        setLoadingError(true);
+        setImagesLoaded(true);
+        
+        // Still dispatch event so preloader can hide
+        const heroLoadedEvent = new Event('heroImagesLoaded');
+        window.dispatchEvent(heroLoadedEvent);
+      });
+      
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Start the rotation only after images are loaded
@@ -70,7 +126,9 @@ export const Hero = () => {
               }}
               className="absolute inset-0 bg-cover bg-center"
               style={{ 
-                backgroundImage: `url(${images[currentImageIndex]})`,
+                backgroundImage: loadingError 
+                  ? `url(${fallbackImage})` 
+                  : `url(${images[currentImageIndex]})`,
                 // This ensures an image is always visible during transitions
                 zIndex: currentImageIndex 
               }}
@@ -78,6 +136,14 @@ export const Hero = () => {
               aria-label="Hero Background"
             />
           </AnimatePresence>
+        </div>
+      )}
+
+      {/* Loading indicator - shown when images are not loaded yet */}
+      {!imagesLoaded && (
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center bg-gray-900">
+          <div className="w-12 h-12 border-4 border-t-white border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+          <div className="mt-4 text-white">{loadingProgress}% loaded</div>
         </div>
       )}
 

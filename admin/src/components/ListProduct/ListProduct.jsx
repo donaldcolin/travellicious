@@ -7,12 +7,13 @@ import {AlertDialog,AlertDialogAction,AlertDialogCancel,AlertDialogContent,Alert
 import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash } from 'lucide-react';
 
-const ListOuting = () => {
+const ListProduct = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -27,8 +28,8 @@ const ListOuting = () => {
     };
 
     fetchProducts();
-  }, []);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  }, [API_BASE_URL]);
+  
   const handleRemove = async () => {
     try {
       await axios.post(`${API_BASE_URL}/removeproduct`, { id: deleteId });
@@ -51,14 +52,14 @@ const ListOuting = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-2rem)] ml-[280px] p-8">
+      <div className="flex items-center justify-center min-h-[calc(100vh-2rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
       </div>
     );
   }
 
   return (
-    <div className="ml-[280px] p-8"> {/* Added margin-left to prevent sidebar overlap */}
+    <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Products</h1>
       </div>
@@ -133,4 +134,4 @@ const ListOuting = () => {
   );
 };
 
-export default ListOuting;
+export default ListProduct;

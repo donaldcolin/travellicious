@@ -12,17 +12,18 @@ import { Calendar as CalendarIcon } from "lucide-react";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
+    id: Math.floor(Math.random() * 1000), // Generate a random ID
     name: "",
-  
+    category: "trek", // Default category
     location: "",
     distanceFromBangalore: "",
-    nextdate: new Date(), // Single date
-    availabledates: [], // Array of dates
+    nextdate: new Date(),
+    availabledates: [],
     duration: "",
+    altitude: "",
+    dificulty: "",
     description: "",
     bigDescription: "",
-    dificulty: "",
-    altitude: "",
     images: [],
     attractions: [""],
     services: {
@@ -51,7 +52,7 @@ const AddProduct = () => {
       const priceKey = name.split(".")[1];
       setFormData(prev => ({
         ...prev,
-        price: { ...prev.price, [priceKey]: value },
+        price: { ...prev.price, [priceKey]: Number(value) }, // Convert to number
       }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -85,72 +86,113 @@ const AddProduct = () => {
       images: [...prev.images, ...filesArray],
     }));
   };
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const addProduct = async () => {
-    const formdata = new FormData();
-    formData.images.forEach((file) => formdata.append("product", file));
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_API_BASE;
+  const addProduct = async () => {
     try {
-      const uploadResponse = await fetch(`${API_BASE_URL}/upload`, {
+      // First upload images
+      const formdata = new FormData();
+      formData.images.forEach((file) => {
+        formdata.append("product", file);
+      });
+
+      // Log the API URL for debugging
+      console.log('Upload URL:', `${API_BASE}/upload`);
+
+      const uploadResponse = await fetch(`${API_BASE}/upload`, {
         method: "POST",
         body: formdata,
       });
+
+      // Log the response status and headers
+      console.log('Upload Response Status:', uploadResponse.status);
+      console.log('Upload Response Headers:', uploadResponse.headers);
+
+      // Check if response is JSON
+      const contentType = uploadResponse.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await uploadResponse.text();
+        console.error('Non-JSON response:', text);
+        throw new Error(`Expected JSON response but got ${contentType}`);
+      }
+
       const uploadData = await uploadResponse.json();
 
-      if (uploadData.success) {
-        const productData = {
-          ...formData,
-          images: uploadData.image_urls,
-        };
+      if (!uploadData.success) {
+        throw new Error(uploadData.message || "Image upload failed");
+      }
 
-        const addProductResponse = await fetch(`${API_BASE_URL}/addproduct`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      // Prepare product data
+      const productData = {
+        ...formData,
+        images: uploadData.image_urls,
+        price: {
+          single: Number(formData.price.single),
+          package: Number(formData.price.package),
+        },
+        nextdate: formData.nextdate.toISOString(),
+        availabledates: formData.availabledates.map(date => date.toISOString()),
+      };
+
+      // Log the product data for debugging
+      console.log('Product Data:', productData);
+
+      // Add product
+      const addProductResponse = await fetch(`${API_BASE_URL}/addproduct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(productData),
+      });
+
+      // Check if response is JSON
+      const productContentType = addProductResponse.headers.get("content-type");
+      if (!productContentType || !productContentType.includes("application/json")) {
+        const text = await addProductResponse.text();
+        console.error('Non-JSON response:', text);
+        throw new Error(`Expected JSON response but got ${productContentType}`);
+      }
+
+      const addProductData = await addProductResponse.json();
+
+      if (addProductData.success) {
+        alert("Product added successfully");
+        // Reset form
+        setFormData({
+          id: Math.floor(Math.random() * 1000),
+          name: "",
+          category: "trek",
+          location: "",
+          distanceFromBangalore: "",
+          nextdate: new Date(),
+          availabledates: [],
+          duration: "",
+          altitude: "",
+          dificulty: "",
+          description: "",
+          bigDescription: "",
+          images: [],
+          attractions: [""],
+          services: {
+            meals: "",
+            returnTiming: "",
+            groupSize: "",
+            transport: "",
+            pickupDrop: "",
           },
-          body: JSON.stringify(productData),
+          price: {
+            single: "",
+            package: "",
+          },
         });
-
-        const addProductData = await addProductResponse.json();
-        if (addProductData.success) {
-          alert("Product added successfully");
-          // Reset form
-          setFormData({
-            name: "",
-        
-            location: "",
-            distanceFromBangalore: "",
-            nextdate: new Date(),
-            availabledates: [],
-            duration: "",
-            description: "",
-            bigDescription: "",
-            dificulty: "",
-            altitude: "",
-        
-            images: [],
-            attractions: [""],
-            services: {
-              meals: "",
-              returnTiming: "",
-              groupSize: "",
-              transport: "",
-              pickupDrop: "",
-            },
-            price: {
-              single: "",
-              package: "",
-            },
-          });
-        } else {
-          alert("Failed to add product");
-        }
       } else {
-        alert("Image upload failed");
+        throw new Error(addProductData.message || "Failed to add product");
       }
     } catch (error) {
       console.error("Error adding product:", error);
-      alert("Something went wrong");
+      alert(error.message || "Something went wrong");
     }
   };
 
@@ -179,8 +221,6 @@ const AddProduct = () => {
                   required
                 />
               </div>
-
-             
 
               <div>
                 <label className="block text-sm font-medium mb-1">Next Available Date</label>
@@ -235,17 +275,19 @@ const AddProduct = () => {
                   required
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium mb-1">Dificulty</label>
+                <label className="block text-sm font-medium mb-1">Difficulty</label>
                 <Input
                   type="text"
                   name="dificulty"
                   value={formData.dificulty}
                   onChange={handleChange}
-                  placeholder="Enter dificulty"
-                
+                  placeholder="Enter difficulty level"
+                  required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium mb-1">Altitude</label>
                 <Input
@@ -254,7 +296,7 @@ const AddProduct = () => {
                   value={formData.altitude}
                   onChange={handleChange}
                   placeholder="Enter altitude"
-              
+                  required
                 />
               </div>
 
@@ -271,16 +313,16 @@ const AddProduct = () => {
               </div>
 
               <div>
-  <label className="block text-sm font-medium mb-1">Duration</label>
-  <Input
-    type="text"
-    name="duration"
-    value={formData.duration}
-    onChange={handleChange}
-    placeholder="Enter duration"
-    required
-  />
-</div>
+                <label className="block text-sm font-medium mb-1">Duration</label>
+                <Input
+                  type="text"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  placeholder="Enter duration"
+                  required
+                />
+              </div>
 
               <div>
                 <label className="block text-sm font-medium mb-1">Description</label>
@@ -314,6 +356,7 @@ const AddProduct = () => {
                       value={attraction}
                       onChange={(e) => handleAttractionsChange(index, e.target.value)}
                       placeholder="Enter an attraction"
+                      required
                     />
                   ))}
                   <Button
@@ -335,6 +378,7 @@ const AddProduct = () => {
                   onChange={handleFileChange}
                   accept="image/*"
                   className="cursor-pointer"
+                  required
                 />
               </div>
 

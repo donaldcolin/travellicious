@@ -38,7 +38,7 @@ class ProductController {
       // Map products to include full image URLs
       const productsWithFullImages = products.map(product => ({
         ...product.toObject(),
-        image: product.image ? `http://localhost:4000/images/${product.image}` : null
+        image: product.image ? `https://travellicious.onrender.com/images/${product.image}` : null
       }));
 
       res.json(productsWithFullImages);

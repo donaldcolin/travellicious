@@ -133,39 +133,39 @@ const LoginPage = ({ onLoginSuccess }) => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto w-12 h-12 bg-black rounded-lg flex items-center justify-center mb-3">
-            <span className="text-white font-bold text-xl">T</span>
+      <Card className="w-full max-w-md shadow-lg border-0">
+        <CardHeader className="space-y-1 text-center pb-6">
+          <div className="mx-auto w-16 h-16 bg-black rounded-lg flex items-center justify-center mb-3">
+            <span className="text-white font-bold text-2xl">T</span>
           </div>
-          <CardTitle className="text-2xl font-bold">Travellious</CardTitle>
-          <CardDescription>Admin Portal | Sign In</CardDescription>
+          <CardTitle className="text-2xl font-bold">Travellicious</CardTitle>
+          <CardDescription className="text-base">Admin Portal | Sign In</CardDescription>
         </CardHeader>
         
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4 pt-6">
+          <CardContent className="space-y-5 pt-2">
             {/* Error Message */}
             {error && (
-              <Alert variant="destructive" className="mb-2">
+              <Alert variant="destructive" className="mb-4">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             
             {/* Email Field */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <Mail className="h-4 w-4 text-gray-400" />
+                  <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="admin@travellious.com"
+                  placeholder="admin@travellicious.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-10"
+                  className="pl-10 py-6"
                   required
                 />
               </div>
@@ -173,10 +173,10 @@ const LoginPage = ({ onLoginSuccess }) => {
             
             {/* Password Field */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-gray-400" />
+                  <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <Input
                   id="password"
@@ -185,7 +185,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
-                  className="pl-10 pr-10"
+                  className="pl-10 pr-10 py-6"
                   required
                 />
                 <button
@@ -194,7 +194,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                   className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600"
                   tabIndex="-1"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
@@ -212,17 +212,17 @@ const LoginPage = ({ onLoginSuccess }) => {
             </div>
           </CardContent>
           
-          <CardFooter className="flex flex-col">
+          <CardFooter className="flex flex-col pt-2">
             <Button 
               type="submit" 
-              className="w-full bg-black hover:bg-gray-800 text-white"
+              className="w-full bg-black hover:bg-gray-800 text-white py-6"
               disabled={isLoading}
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
             
             <p className="text-xs text-gray-500 text-center mt-6">
-              © {new Date().getFullYear()} Travellious. All rights reserved.
+              © {new Date().getFullYear()} Travellicious. All rights reserved.
             </p>
           </CardFooter>
         </form>

@@ -43,7 +43,7 @@ const App = () => {
     };
 
     checkAuth();
-  }, []);
+  }, [API_BASE_URL]);
 
   const handleLoginSuccess = (userData, token) => {
     setUser(userData);
@@ -55,11 +55,14 @@ const App = () => {
     sessionStorage.removeItem('token');
     setUser(null);
     setIsAuthenticated(false);
-    alert('Logged out successfully');
   };
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900" />
+      </div>
+    );
   }
 
   return (

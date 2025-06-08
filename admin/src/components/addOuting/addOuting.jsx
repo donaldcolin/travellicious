@@ -72,12 +72,13 @@ const AddOuting = () => {
     }));
   };
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_API_BASE;
   const addOuting = async () => {
     const formdata = new FormData();
     formData.images.forEach((file) => formdata.append("images", file));
 
     try {
-      const uploadResponse = await fetch(`${API_BASE_URL}/upload`, {
+      const uploadResponse = await fetch(`${API_BASE}/upload`, {
         method: "POST",
         body: formdata,
       });

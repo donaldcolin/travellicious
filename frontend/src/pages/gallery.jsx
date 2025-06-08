@@ -2,12 +2,47 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+
+const SkeletonImage = ({ className }) => (
+  <div className={`animate-pulse rounded-lg overflow-hidden ${className}`}>
+    <div className="w-full h-full bg-gray-300"></div>
+  </div>
+);
+
+// Progressive Image component for smooth loading
+const ProgressiveImage = ({ src, alt, className, imageClassName = "", onLoad }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      {/* Placeholder */}
+      {!imageLoaded && (
+        <div className="absolute inset-0 bg-gray-300 animate-pulse rounded-lg" />
+      )}
+      
+      {/* Actual image with opacity transition */}
+      <motion.img
+        src={src}
+        alt={alt}
+        className={`w-full h-full object-cover rounded-lg ${imageClassName} ${
+          !imageLoaded ? "opacity-0" : "opacity-100"
+        }`}
+        style={{ transition: "opacity 0.3s ease-in-out" }}
+        onLoad={() => {
+          setImageLoaded(true);
+          if (onLoad) onLoad();
+        }}
+      />
+    </div>
+  );
+};
 
 export const Gallery = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imagesLoaded, setImagesLoaded] = useState(0);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   useEffect(() => {
@@ -16,8 +51,6 @@ export const Gallery = () => {
         const [productsResponse, outingsResponse] = await Promise.all([
           axios.get(`${API_BASE_URL}/allproducts`),
           axios.get(`${API_BASE_URL}/allOutings`),
-       
-
         ]);
         
         // Format product images
@@ -51,7 +84,11 @@ export const Gallery = () => {
         );
         
         setImages(allImages);
-        setLoading(false);
+        
+        // Set a small timeout before hiding loading state to allow for initial images to start loading
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       } catch (err) {
         console.error("Error fetching images:", err);
         setError("Failed to fetch images");
@@ -61,15 +98,80 @@ export const Gallery = () => {
 
     fetchAllImages();
   }, []);
+  
+  // Track progress of loaded images
+  const handleImageLoad = () => {
+    setImagesLoaded(prev => prev + 1);
+  };
+  
+  // Calculate loading percentage
+  const loadingProgress = images.length > 0 
+    ? Math.floor((imagesLoaded / images.length) * 100) 
+    : 0;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen pt-16">
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-          className="h-12 w-12 border-2 border-black border-t-transparent rounded-full"
-        />
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="w-48 h-10 bg-gray-300 animate-pulse mx-auto mb-8 rounded-md"></div>
+        
+        {/* Mobile Skeleton */}
+        <div className="md:hidden space-y-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div key={index} className="w-full aspect-video">
+              <SkeletonImage className="w-full h-full" />
+            </div>
+          ))}
+        </div>
+        
+        {/* Desktop Skeleton - Bento grid layout */}
+        <div className="hidden md:block space-y-16">
+          {Array.from({ length: 2 }).map((_, sectionIndex) => (
+            <div 
+              key={sectionIndex} 
+              className="grid grid-cols-4 grid-rows-3 gap-4 sm:gap-6 md:gap-8 auto-rows-fr"
+            >
+              {/* Large skeleton */}
+              <div className="col-span-2 row-span-2">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+              
+              {/* Wide skeleton */}
+              <div className="col-span-2 row-span-1">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+              
+              {/* Small skeleton */}
+              <div className="col-span-1 row-span-1">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+              
+              {/* Tall skeleton */}
+              <div className="col-span-1 row-span-2">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+              
+              {/* Small skeleton */}
+              <div className="col-span-1 row-span-1">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+              
+              {/* Small skeleton */}
+              <div className="col-span-1 row-span-1">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+              
+              {/* Wide skeleton */}
+              <div className="col-span-2 row-span-1">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+              
+              {/* Wide skeleton */}
+              <div className="col-span-2 row-span-1">
+                <SkeletonImage className="w-full h-full" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -103,7 +205,20 @@ export const Gallery = () => {
         Our Gallery
       </motion.h1>
       
-      {images.length === 0 ? (
+      {/* Loading progress indicator */}
+      {!loading && images.length > 0 && imagesLoaded < images.length && (
+        <div className="fixed bottom-4 right-4 bg-white p-2 rounded-md shadow-md z-50">
+          <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${loadingProgress}%` }}
+            ></div>
+          </div>
+          <p className="text-xs text-center mt-1">{loadingProgress}% loaded</p>
+        </div>
+      )}
+      
+      {images.length === 0 && !loading ? (
         <p className="text-center text-gray-500">No images found</p>
       ) : (
         <>
@@ -120,12 +235,12 @@ export const Gallery = () => {
                 <Link to={`/${item.type}/${item.id}`} className="block relative group">
                   <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
                     <CardContent className="p-0">
-                      <motion.img
-                        whileHover={{ scale: 1.03 }}
-                        transition={{ duration: 0.3 }}
+                      <ProgressiveImage
                         src={item.image}
                         alt={`${item.name} Image`}
-                        className="w-full aspect-video object-cover rounded-lg"
+                        className="w-full aspect-video"
+                        imageClassName="transition-transform duration-300 group-hover:scale-103"
+                        onLoad={handleImageLoad}
                       />
                       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                         <h3 className="text-white text-lg font-semibold px-4 text-center">
@@ -157,12 +272,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[0].image}
                           alt={`${section[0].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-lg sm:text-xl md:text-2xl font-semibold px-4 text-center">
@@ -181,12 +296,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[1].image}
                           alt={`${section[1].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-sm sm:text-base md:text-lg font-semibold px-4 text-center">
@@ -205,12 +320,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[2].image}
                           alt={`${section[2].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
@@ -229,12 +344,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[3].image}
                           alt={`${section[3].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
@@ -253,12 +368,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[4].image}
                           alt={`${section[4].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
@@ -277,12 +392,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[5].image}
                           alt={`${section[5].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
@@ -301,12 +416,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[6].image}
                           alt={`${section[6].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-sm sm:text-base md:text-lg font-semibold px-4 text-center">
@@ -325,12 +440,12 @@ export const Gallery = () => {
                   >
                     <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
-                        <motion.img
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.4 }}
+                        <ProgressiveImage
                           src={section[7].image}
                           alt={`${section[7].name} Image`}
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full"
+                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          onLoad={handleImageLoad}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <h3 className="text-white text-sm sm:text-base md:text-lg font-semibold px-4 text-center">
