@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const SkeletonImage = ({ className }) => (
   <div className={`animate-pulse rounded-lg overflow-hidden ${className}`}>
@@ -263,24 +263,25 @@ export const Gallery = () => {
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="grid grid-cols-4 grid-rows-3 gap-4 sm:gap-6 md:gap-8 auto-rows-fr"
+                className="grid grid-cols-3 gap-8"
               >
+                {/* First row */}
                 {section.length > 0 && (
                   <Link
                     to={`/${section[0].type}/${section[0].id}`}
-                    className="col-span-2 row-span-2 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[0].image}
                           alt={`${section[0].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-lg sm:text-xl md:text-2xl font-semibold px-4 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[0].name}
                           </h3>
                         </div>
@@ -292,19 +293,19 @@ export const Gallery = () => {
                 {section.length > 1 && (
                   <Link
                     to={`/${section[1].type}/${section[1].id}`}
-                    className="col-span-2 row-span-1 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[1].image}
                           alt={`${section[1].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-sm sm:text-base md:text-lg font-semibold px-4 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[1].name}
                           </h3>
                         </div>
@@ -316,19 +317,19 @@ export const Gallery = () => {
                 {section.length > 2 && (
                   <Link
                     to={`/${section[2].type}/${section[2].id}`}
-                    className="col-span-1 row-span-1 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[2].image}
                           alt={`${section[2].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[2].name}
                           </h3>
                         </div>
@@ -337,22 +338,23 @@ export const Gallery = () => {
                   </Link>
                 )}
                 
+                {/* Second row */}
                 {section.length > 3 && (
                   <Link
                     to={`/${section[3].type}/${section[3].id}`}
-                    className="col-span-1 row-span-2 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[3].image}
                           alt={`${section[3].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[3].name}
                           </h3>
                         </div>
@@ -364,19 +366,19 @@ export const Gallery = () => {
                 {section.length > 4 && (
                   <Link
                     to={`/${section[4].type}/${section[4].id}`}
-                    className="col-span-1 row-span-1 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[4].image}
                           alt={`${section[4].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[4].name}
                           </h3>
                         </div>
@@ -388,19 +390,19 @@ export const Gallery = () => {
                 {section.length > 5 && (
                   <Link
                     to={`/${section[5].type}/${section[5].id}`}
-                    className="col-span-1 row-span-1 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[5].image}
                           alt={`${section[5].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-xs sm:text-sm md:text-base font-semibold px-2 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[5].name}
                           </h3>
                         </div>
@@ -409,22 +411,23 @@ export const Gallery = () => {
                   </Link>
                 )}
                 
+                {/* Third row */}
                 {section.length > 6 && (
                   <Link
                     to={`/${section[6].type}/${section[6].id}`}
-                    className="col-span-2 row-span-1 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[6].image}
                           alt={`${section[6].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-sm sm:text-base md:text-lg font-semibold px-4 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[6].name}
                           </h3>
                         </div>
@@ -436,20 +439,44 @@ export const Gallery = () => {
                 {section.length > 7 && (
                   <Link
                     to={`/${section[7].type}/${section[7].id}`}
-                    className="col-span-2 row-span-1 relative group"
+                    className="col-span-1 row-span-1 relative group aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-xl transition-all duration-300 border-0">
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
                           src={section[7].image}
                           alt={`${section[7].name} Image`}
                           className="w-full h-full"
-                          imageClassName="transition-transform duration-400 group-hover:scale-105"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                          <h3 className="text-white text-sm sm:text-base md:text-lg font-semibold px-4 text-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                             {section[7].name}
+                          </h3>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                )}
+                
+                {section.length > 8 && (
+                  <Link
+                    to={`/${section[8].type}/${section[8].id}`}
+                    className="col-span-1 row-span-1 relative group aspect-square"
+                  >
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
+                      <CardContent className="p-0 h-full">
+                        <ProgressiveImage
+                          src={section[8].image}
+                          alt={`${section[8].name} Image`}
+                          className="w-full h-full"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
+                          onLoad={handleImageLoad}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            {section[8].name}
                           </h3>
                         </div>
                       </CardContent>

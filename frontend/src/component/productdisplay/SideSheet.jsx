@@ -107,7 +107,7 @@ const ContactSideSheet = () => {
       <SheetTrigger asChild>
         <div className="flex justify-center items-center">
           <Button className="w-full py-4 bg-black text-white hover:bg-gray-800 rounded-lg font-medium">
-            Book Trek Now
+            Coming soon
           </Button>
         </div>
       </SheetTrigger>

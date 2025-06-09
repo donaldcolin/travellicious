@@ -122,9 +122,9 @@ export const ProductDisplay = ({ product }) => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {[
                 { icon: MapPin, label: 'Location', value: product.location },
-                { icon: Mountain, label: 'Altitude', value: product.altitude || 'N/A' },
+                { icon: Mountain, label: 'Distance', value: product.altitude || 'N/A' },
                 { icon: Clock, label: 'Duration', value: product.duration || 'N/A' },
-                { icon: Footprints, label: 'Grade', value: product.difficulty || 'N/A' },
+                { icon: Footprints, label: 'Difficulty ', value: product.difficulty || 'N/A' },
               ].map((item, index) => (
                 <motion.div
                   key={index}
@@ -154,6 +154,9 @@ export const ProductDisplay = ({ product }) => {
               <p className="text-gray-600 text-lg leading-relaxed">{product.description}</p>
             </motion.div>
 
+         
+
+            {/* Commented out services and attractions section
             <div className="grid md:grid-cols-2 gap-12">
               <motion.div
                 className="space-y-6"
@@ -203,35 +206,29 @@ export const ProductDisplay = ({ product }) => {
                 </div>
               </motion.div>
             </div>
-
-            <motion.div
-              className="bg-gray-50 p-8 rounded-xl shadow-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                <div>
+            */}
+                {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                {/* <div>
                   <p className="text-lg text-gray-600">Next available date</p>
                   <Suspense fallback={<div>Loading date...</div>}>
                     <DateFormatter date={product.nextdate} />
                   </Suspense>
-                </div>
+                </div> */}
                 <div>
-                  <p className="text-lg text-gray-600">Price per person</p>
+                  {/* <p className="text-lg text-gray-600">Price per person</p>
                   <p className="text-3xl font-bold">
                     ₹{typeof product.price === 'object' ? product.price.single : product.price}
-                  </p>
-                </div>
+                  </p> */}
+                </div> 
+              <div className="">
                 <Suspense fallback={<div>Loading contact sheet...</div>}>
                   <ContactSideSheet />
                 </Suspense>
               </div>
-            </motion.div>
           </div>
         </Section>
 
-        {/* Section 3: Reviews */}
+        {/* Section 3: Reviews
         <Section className="bg-gray-50">
           <div className="w-full max-w-6xl mx-auto px-4 py-14">
             <motion.h2
@@ -265,7 +262,7 @@ export const ProductDisplay = ({ product }) => {
               </div>
             )}
           </div>
-        </Section>
+        </Section> */}
       </div>
     </div>
   );
