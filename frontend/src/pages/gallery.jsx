@@ -213,45 +213,23 @@ export const Gallery = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
               >
-                {item.type !== 'gallery' ? (
-                  <Link to={`/${item.type}/${item.id}`} className="block">
-                    <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
-                      <CardContent className="p-0">
-                        <ProgressiveImage
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full aspect-video"
-                          imageClassName="transition-transform duration-300 group-hover:scale-103"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="p-4">
-                          <h3 className="text-lg font-semibold">{item.title}</h3>
-                          {item.description && (
-                            <p className="text-gray-600 mt-2">{item.description}</p>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ) : (
-                  <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
-                    <CardContent className="p-0">
-                      <ProgressiveImage
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full aspect-video"
-                        imageClassName="transition-transform duration-300 group-hover:scale-103"
-                        onLoad={handleImageLoad}
-                      />
-                      <div className="p-4">
-                        <h3 className="text-lg font-semibold">{item.title}</h3>
-                        {item.description && (
-                          <p className="text-gray-600 mt-2">{item.description}</p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
+                  <CardContent className="p-0">
+                    <ProgressiveImage
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full aspect-video"
+                      imageClassName="transition-transform duration-300 group-hover:scale-103"
+                      onLoad={handleImageLoad}
+                    />
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold">{item.title}</h3>
+                      {item.description && (
+                        <p className="text-gray-600 mt-2">{item.description}</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>
@@ -276,49 +254,25 @@ export const Gallery = () => {
                     transition={{ duration: 0.4, delay: index * 0.05 }}
                     className="aspect-square"
                   >
-                    {item.type !== 'gallery' ? (
-                      <Link to={`/${item.type}/${item.id}`}>
-                        <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                          <CardContent className="p-0 h-full">
-                            <ProgressiveImage
-                              src={item.image}
-                              alt={item.title}
-                              className="w-full h-full"
-                              imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                              onLoad={handleImageLoad}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                              <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                <h3 className="text-lg font-semibold">{item.title}</h3>
-                                {item.description && (
-                                  <p className="text-sm mt-1">{item.description}</p>
-                                )}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    ) : (
-                      <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                        <CardContent className="p-0 h-full">
-                          <ProgressiveImage
-                            src={item.image}
-                            alt={item.title}
-                            className="w-full h-full"
-                            imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                            onLoad={handleImageLoad}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                            <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                              <h3 className="text-lg font-semibold">{item.title}</h3>
-                              {item.description && (
-                                <p className="text-sm mt-1">{item.description}</p>
-                              )}
-                            </div>
+                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
+                      <CardContent className="p-0 h-full">
+                        <ProgressiveImage
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full"
+                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
+                          onLoad={handleImageLoad}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                          <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 className="text-lg font-semibold">{item.title}</h3>
+                            {item.description && (
+                              <p className="text-sm mt-1">{item.description}</p>
+                            )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    )}
+                        </div>
+                      </CardContent>
+                    </Card>
                   </motion.div>
                 ))}
               </motion.div>

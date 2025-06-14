@@ -183,10 +183,10 @@ export const Outings = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl font-bold tracking-tight mb-4 text-gray-900">
-            Explore Adventures Near Bangalore
+            Explore Resorts Near Bangalore
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Discover breathtaking trails and memorable experiences within easy reach of the city
+            Discover memorable experiences within easy reach of the city
           </p>
         </motion.div>
 

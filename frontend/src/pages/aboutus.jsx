@@ -392,7 +392,7 @@ export const AboutUs = () => {
                 </div>
                 <div className="bg-white pt-6 pb-8 px-6 rounded-b-2xl shadow-lg border border-gray-100 border-t-0 relative">
                   <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-black text-white px-6 py-1 rounded-full text-sm">
-                    CTO & Developer
+                    SDE
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 text-center mt-2">Donald Colin</h3>
                   <p className="text-gray-600 text-center mt-2">

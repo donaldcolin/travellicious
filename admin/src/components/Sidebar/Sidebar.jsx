@@ -94,6 +94,12 @@ const Sidebar = ({ onLogout, user }) => {
                 <span>Reach</span>
               </Link>
             </li>
+            <li className="my-1">
+              <Link to="/gallery" className="flex items-center px-6 py-3 text-white no-underline transition-all duration-300 ease-in-out gap-3 hover:bg-white/10">
+                <span className="text-xl w-6 text-center">🖼️</span>
+                <span>Gallery</span>
+              </Link>
+            </li>
           </ul>
         </nav>
 

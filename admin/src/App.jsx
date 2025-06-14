@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Admin from './pages/admin/admin';
 import LoginPage from './pages/admin/login';
+import { Toaster } from 'sonner';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -67,6 +68,7 @@ const App = () => {
 
   return (
     <div>
+      <Toaster position="top-right" richColors />
       {isAuthenticated ? (
         <Admin user={user} onLogout={handleLogout} />
       ) : (

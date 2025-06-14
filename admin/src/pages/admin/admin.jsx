@@ -10,6 +10,7 @@ import EditProduct from '@/components/EditProduct/EditProduct'
 import EditOuting from '@/components/EditOuting/EditOuting'
 import Bought from '@/components/bought/bought'
 import { Growth } from '@/components/growth/growth'
+import Gallery from '@/pages/Gallery'
 
 const Admin = ({ user, onLogout }) => {
   return (
@@ -27,6 +28,7 @@ const Admin = ({ user, onLogout }) => {
           <Route path="/updateOuting/:id" element={<EditOuting/>} />
           <Route path="/buy" element={<Bought/>} />
           <Route path="/growth" element={<Growth/>} />
+          <Route path="/gallery" element={<Gallery/>} />
         </Routes>
       </div>
     </div>
