@@ -12,6 +12,7 @@ const outingRoutes = require("./routes/Outingroutes");
 const contactRoutes = require("./routes/ContactRoutes");
 const userRoutes= require("./routes/UserRoutes")
 const reviewRoutes = require("./routes/ReviewRoutes")
+const galleryRoutes = require("./routes/galleryroutes");
 
 const app = express();
 const port = 4000;
@@ -19,6 +20,7 @@ const port = 4000;
 // Middleware
 app.use(express.json());
 app.use(cors());
+app.use('/uploads', express.static('uploads'));
 
 // Cloudinary configuration
 cloudinary.config({
@@ -83,6 +85,7 @@ app.use("/api", outingRoutes);
 app.use("/api", contactRoutes);
 app.use("/api", userRoutes);
 app.use("/api", reviewRoutes);
+app.use("/api", galleryRoutes);
 
 // Start server
 app.listen(port, () => {

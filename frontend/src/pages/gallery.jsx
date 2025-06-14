@@ -48,20 +48,22 @@ export const Gallery = () => {
   useEffect(() => {
     const fetchAllImages = async () => {
       try {
-        const [productsResponse, outingsResponse] = await Promise.all([
+        // Fetch from all three sources
+        const [productsResponse, outingsResponse, galleryResponse] = await Promise.all([
           axios.get(`${API_BASE_URL}/allproducts`),
           axios.get(`${API_BASE_URL}/allOutings`),
+          axios.get(`${API_BASE_URL}/gallery`)
         ]);
         
         // Format product images
         const productImages = productsResponse.data.flatMap(product => 
           product.images.map((image) => ({
             image: image.startsWith('http') ? image : `${API_BASE_URL}${image}`,
-            id: product.id,
-            name: product.name,
+            id: product._id,
+            title: product.name,
+            description: product.description,
             type: 'product',
-            // Add a stable sortKey
-            sortKey: `product-${product.id}-${product.name}`
+            sortKey: `product-${product._id}-${product.name}`
           }))
         );
 
@@ -69,29 +71,36 @@ export const Gallery = () => {
         const outingImages = outingsResponse.data.flatMap(outing => 
           outing.images.map((image) => ({
             image: image.startsWith('http') ? image : `${API_BASE_URL}${image}`,
-            id: outing.id,
-            name: outing.name,
+            id: outing._id,
+            title: outing.name,
+            description: outing.description,
             type: 'outing',
-            // Add a stable sortKey
-            sortKey: `outing-${outing.id}-${outing.name}`
+            sortKey: `outing-${outing._id}-${outing.name}`
           }))
         );
 
-        // Combine all images and sort them by the stable sortKey
-        // This ensures consistent ordering across page reloads
-        const allImages = [...productImages, ...outingImages].sort((a, b) => 
-          a.sortKey.localeCompare(b.sortKey)
-        );
+        // Format gallery images
+        const galleryImages = galleryResponse.data.map(image => ({
+          image: image.imageUrl,
+          id: image._id,
+          title: image.title,
+          description: image.description,
+          type: 'gallery',
+          sortKey: `gallery-${image._id}-${image.title}`
+        }));
+
+        // Combine all images and sort them by creation date
+        const allImages = [...productImages, ...outingImages, ...galleryImages]
+          .sort((a, b) => b.sortKey.localeCompare(a.sortKey));
         
         setImages(allImages);
         
-        // Set a small timeout before hiding loading state to allow for initial images to start loading
         setTimeout(() => {
           setLoading(false);
         }, 300);
       } catch (err) {
         console.error("Error fetching images:", err);
-        setError("Failed to fetch images");
+        setError(err.response?.data?.message || err.message || "Failed to fetch images");
         setLoading(false);
       }
     };
@@ -128,47 +137,13 @@ export const Gallery = () => {
           {Array.from({ length: 2 }).map((_, sectionIndex) => (
             <div 
               key={sectionIndex} 
-              className="grid grid-cols-4 grid-rows-3 gap-4 sm:gap-6 md:gap-8 auto-rows-fr"
+              className="grid grid-cols-3 gap-8"
             >
-              {/* Large skeleton */}
-              <div className="col-span-2 row-span-2">
-                <SkeletonImage className="w-full h-full" />
-              </div>
-              
-              {/* Wide skeleton */}
-              <div className="col-span-2 row-span-1">
-                <SkeletonImage className="w-full h-full" />
-              </div>
-              
-              {/* Small skeleton */}
-              <div className="col-span-1 row-span-1">
-                <SkeletonImage className="w-full h-full" />
-              </div>
-              
-              {/* Tall skeleton */}
-              <div className="col-span-1 row-span-2">
-                <SkeletonImage className="w-full h-full" />
-              </div>
-              
-              {/* Small skeleton */}
-              <div className="col-span-1 row-span-1">
-                <SkeletonImage className="w-full h-full" />
-              </div>
-              
-              {/* Small skeleton */}
-              <div className="col-span-1 row-span-1">
-                <SkeletonImage className="w-full h-full" />
-              </div>
-              
-              {/* Wide skeleton */}
-              <div className="col-span-2 row-span-1">
-                <SkeletonImage className="w-full h-full" />
-              </div>
-              
-              {/* Wide skeleton */}
-              <div className="col-span-2 row-span-1">
-                <SkeletonImage className="w-full h-full" />
-              </div>
+              {Array.from({ length: 9 }).map((_, index) => (
+                <div key={index} className="aspect-square">
+                  <SkeletonImage className="w-full h-full" />
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -178,16 +153,22 @@ export const Gallery = () => {
 
   if (error) {
     return (
-      <div className="text-red-500 text-center mt-24">
-        {error}
+      <div className="container mx-auto px-4 py-8 mt-16">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h2 className="text-red-800 text-lg font-semibold mb-2">Error Loading Gallery</h2>
+          <p className="text-red-600">{error}</p>
+          <p className="text-sm text-red-500 mt-2">
+            Please check if the backend server is running and the API endpoints are correct.
+          </p>
+        </div>
       </div>
     );
   }
 
-  // Split images into groups of 8 for each bento section
+  // Split images into groups of 9 for each bento section
   const bentoSections = [];
-  for (let i = 0; i < images.length; i += 8) {
-    bentoSections.push(images.slice(i, i + 8));
+  for (let i = 0; i < images.length; i += 9) {
+    bentoSections.push(images.slice(i, i + 9));
   }
 
   return (
@@ -232,24 +213,45 @@ export const Gallery = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
               >
-                <Link to={`/${item.type}/${item.id}`} className="block relative group">
+                {item.type !== 'gallery' ? (
+                  <Link to={`/${item.type}/${item.id}`} className="block">
+                    <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
+                      <CardContent className="p-0">
+                        <ProgressiveImage
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full aspect-video"
+                          imageClassName="transition-transform duration-300 group-hover:scale-103"
+                          onLoad={handleImageLoad}
+                        />
+                        <div className="p-4">
+                          <h3 className="text-lg font-semibold">{item.title}</h3>
+                          {item.description && (
+                            <p className="text-gray-600 mt-2">{item.description}</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ) : (
                   <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
                     <CardContent className="p-0">
                       <ProgressiveImage
                         src={item.image}
-                        alt={`${item.name} Image`}
+                        alt={item.title}
                         className="w-full aspect-video"
                         imageClassName="transition-transform duration-300 group-hover:scale-103"
                         onLoad={handleImageLoad}
                       />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
-                        <h3 className="text-white text-lg font-semibold px-4 text-center">
-                          {item.name}
-                        </h3>
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold">{item.title}</h3>
+                        {item.description && (
+                          <p className="text-gray-600 mt-2">{item.description}</p>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
-                </Link>
+                )}
               </motion.div>
             ))}
           </div>
@@ -265,224 +267,60 @@ export const Gallery = () => {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="grid grid-cols-3 gap-8"
               >
-                {/* First row */}
-                {section.length > 0 && (
-                  <Link
-                    to={`/${section[0].type}/${section[0].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
+                {section.map((item, index) => (
+                  <motion.div
+                    key={item.sortKey}
+                    initial={{ y: 20, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    className="aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[0].image}
-                          alt={`${section[0].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[0].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {section.length > 1 && (
-                  <Link
-                    to={`/${section[1].type}/${section[1].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[1].image}
-                          alt={`${section[1].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[1].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {section.length > 2 && (
-                  <Link
-                    to={`/${section[2].type}/${section[2].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[2].image}
-                          alt={`${section[2].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[2].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {/* Second row */}
-                {section.length > 3 && (
-                  <Link
-                    to={`/${section[3].type}/${section[3].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[3].image}
-                          alt={`${section[3].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[3].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {section.length > 4 && (
-                  <Link
-                    to={`/${section[4].type}/${section[4].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[4].image}
-                          alt={`${section[4].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[4].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {section.length > 5 && (
-                  <Link
-                    to={`/${section[5].type}/${section[5].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[5].image}
-                          alt={`${section[5].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[5].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {/* Third row */}
-                {section.length > 6 && (
-                  <Link
-                    to={`/${section[6].type}/${section[6].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[6].image}
-                          alt={`${section[6].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[6].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {section.length > 7 && (
-                  <Link
-                    to={`/${section[7].type}/${section[7].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[7].image}
-                          alt={`${section[7].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[7].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
-                
-                {section.length > 8 && (
-                  <Link
-                    to={`/${section[8].type}/${section[8].id}`}
-                    className="col-span-1 row-span-1 relative group aspect-square"
-                  >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
-                        <ProgressiveImage
-                          src={section[8].image}
-                          alt={`${section[8].name} Image`}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onLoad={handleImageLoad}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <h3 className="text-white text-lg font-semibold text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            {section[8].name}
-                          </h3>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                )}
+                    {item.type !== 'gallery' ? (
+                      <Link to={`/${item.type}/${item.id}`}>
+                        <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
+                          <CardContent className="p-0 h-full">
+                            <ProgressiveImage
+                              src={item.image}
+                              alt={item.title}
+                              className="w-full h-full"
+                              imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
+                              onLoad={handleImageLoad}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                              <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                <h3 className="text-lg font-semibold">{item.title}</h3>
+                                {item.description && (
+                                  <p className="text-sm mt-1">{item.description}</p>
+                                )}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ) : (
+                      <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
+                        <CardContent className="p-0 h-full">
+                          <ProgressiveImage
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full"
+                            imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
+                            onLoad={handleImageLoad}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
+                            <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                              <h3 className="text-lg font-semibold">{item.title}</h3>
+                              {item.description && (
+                                <p className="text-sm mt-1">{item.description}</p>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </motion.div>
+                ))}
               </motion.div>
             ))}
           </div>
