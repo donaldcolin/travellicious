@@ -23,10 +23,27 @@ exports.getImagesByCategory = async (req, res) => {
   }
 };
 
-// Get all categories
+// Get all categories with their descriptions
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Gallery.distinct('category');
+    const categories = await Gallery.aggregate([
+      {
+        $group: {
+          _id: '$category',
+          description: { $first: '$categoryDescription' },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          category: '$_id',
+          description: 1,
+          count: 1,
+          _id: 0
+        }
+      },
+      { $sort: { category: 1 } }
+    ]);
     res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -36,7 +53,7 @@ exports.getAllCategories = async (req, res) => {
 // Upload new image
 exports.uploadImage = async (req, res) => {
   try {
-    const { title, description, category } = req.body;
+    const { category, categoryDescription } = req.body;
     const file = req.file;
 
     if (!file) {
@@ -62,9 +79,8 @@ exports.uploadImage = async (req, res) => {
     const result = await uploadPromise;
 
     const newImage = new Gallery({
-      title,
-      description,
       category,
+      categoryDescription,
       imageUrl: result.secure_url,
       cloudinaryId: result.public_id
     });
@@ -81,11 +97,11 @@ exports.uploadImage = async (req, res) => {
 exports.updateImage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, category } = req.body;
+    const { category, categoryDescription } = req.body;
     
     const updatedImage = await Gallery.findByIdAndUpdate(
       id,
-      { title, description, category },
+      { category, categoryDescription },
       { new: true }
     );
 

@@ -1,16 +1,12 @@
 const mongoose = require('mongoose');
 
 const gallerySchema = new mongoose.Schema({
-  title: {
+  category: {
     type: String,
     required: true,
     trim: true
   },
-  description: {
-    type: String,
-    trim: true
-  },
-  category: {
+  categoryDescription: {
     type: String,
     required: true,
     trim: true

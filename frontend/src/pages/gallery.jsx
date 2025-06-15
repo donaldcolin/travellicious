@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 
 const SkeletonImage = ({ className }) => (
   <div className={`animate-pulse rounded-lg overflow-hidden ${className}`}>
@@ -40,8 +39,6 @@ const ProgressiveImage = ({ src, alt, className, imageClassName = "", onLoad }) 
 
 export const Gallery = () => {
   const [images, setImages] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imagesLoaded, setImagesLoaded] = useState(0);
@@ -50,15 +47,7 @@ export const Gallery = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch categories
-        const categoriesResponse = await axios.get(`${API_BASE_URL}/gallery/categories`);
-        setCategories(categoriesResponse.data);
-
-        // Fetch images based on selected category
-        const imagesResponse = selectedCategory === 'all'
-          ? await axios.get(`${API_BASE_URL}/gallery`)
-          : await axios.get(`${API_BASE_URL}/gallery/category/${selectedCategory}`);
-        
+        const imagesResponse = await axios.get(`${API_BASE_URL}/gallery`);
         setImages(imagesResponse.data);
         
         setTimeout(() => {
@@ -72,7 +61,7 @@ export const Gallery = () => {
     };
 
     fetchData();
-  }, [selectedCategory]);
+  }, []);
 
   // Track progress of loaded images
   const handleImageLoad = () => {
@@ -84,32 +73,33 @@ export const Gallery = () => {
     ? Math.floor((imagesLoaded / images.length) * 100) 
     : 0;
 
+  // Group images by category
+  const groupedImages = images.reduce((acc, image) => {
+    if (!acc[image.category]) {
+      acc[image.category] = {
+        images: [],
+        description: image.categoryDescription
+      };
+    }
+    acc[image.category].images.push(image);
+    return acc;
+  }, {});
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 mt-16">
         <div className="w-48 h-10 bg-gray-300 animate-pulse mx-auto mb-8 rounded-md"></div>
-        
-        {/* Mobile Skeleton */}
-        <div className="md:hidden space-y-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="w-full aspect-video">
-              <SkeletonImage className="w-full h-full" />
-            </div>
-          ))}
-        </div>
-        
-        {/* Desktop Skeleton - Bento grid layout */}
-        <div className="hidden md:block space-y-16">
-          {Array.from({ length: 2 }).map((_, sectionIndex) => (
-            <div 
-              key={sectionIndex} 
-              className="grid grid-cols-3 gap-8"
-            >
-              {Array.from({ length: 9 }).map((_, index) => (
-                <div key={index} className="aspect-square">
-                  <SkeletonImage className="w-full h-full" />
-                </div>
-              ))}
+        <div className="space-y-8">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index}>
+              <div className="w-32 h-8 bg-gray-300 animate-pulse mb-4 rounded-md"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.from({ length: 3 }).map((_, imgIndex) => (
+                  <div key={imgIndex} className="aspect-video">
+                    <SkeletonImage className="w-full h-full" />
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -131,12 +121,6 @@ export const Gallery = () => {
     );
   }
 
-  // Split images into groups of 9 for each bento section
-  const bentoSections = [];
-  for (let i = 0; i < images.length; i += 9) {
-    bentoSections.push(images.slice(i, i + 9));
-  }
-
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -151,27 +135,6 @@ export const Gallery = () => {
       >
         Our Gallery
       </motion.h1>
-
-      {/* Category Filter */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        <Button
-          variant={selectedCategory === 'all' ? 'default' : 'outline'}
-          onClick={() => setSelectedCategory('all')}
-          className="mb-2"
-        >
-          All
-        </Button>
-        {categories.map((category) => (
-          <Button
-            key={category}
-            variant={selectedCategory === category ? 'default' : 'outline'}
-            onClick={() => setSelectedCategory(category)}
-            className="mb-2"
-          >
-            {category}
-          </Button>
-        ))}
-      </div>
       
       {/* Loading progress indicator */}
       {!loading && images.length > 0 && imagesLoaded < images.length && (
@@ -187,87 +150,47 @@ export const Gallery = () => {
       )}
       
       {images.length === 0 && !loading ? (
-        <p className="text-center text-gray-500">No images found in this category</p>
+        <p className="text-center text-gray-500">No images found</p>
       ) : (
-        <>
-          {/* Mobile View - Single column layout */}
-          <div className="md:hidden space-y-4">
-            {images.map((item, index) => (
-              <motion.div
-                key={item._id}
-                initial={{ y: 20, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-              >
-                <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
-                  <CardContent className="p-0">
-                    <ProgressiveImage
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-full aspect-video"
-                      imageClassName="transition-transform duration-300 group-hover:scale-103"
-                      onLoad={handleImageLoad}
-                    />
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold">{item.title}</h3>
-                      {item.description && (
-                        <p className="text-gray-600 mt-2">{item.description}</p>
-                      )}
-                      <p className="text-sm text-gray-500 mt-2">Category: {item.category}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Desktop View - Bento grid layout */}
-          <div className="hidden md:block space-y-16">
-            {bentoSections.map((section, sectionIndex) => (
-              <motion.div 
-                key={sectionIndex} 
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="grid grid-cols-3 gap-8"
-              >
-                {section.map((item, index) => (
+        <div className="space-y-12">
+          {Object.entries(groupedImages).map(([category, { images: categoryImages, description }]) => (
+            <motion.div
+              key={category}
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">{category}</h2>
+                <p className="text-gray-600 mt-2">{description}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categoryImages.map((item, index) => (
                   <motion.div
                     key={item._id}
                     initial={{ y: 20, opacity: 0 }}
                     whileInView={{ y: 0, opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: index * 0.05 }}
-                    className="aspect-square"
                   >
-                    <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
-                      <CardContent className="p-0 h-full">
+                    <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
+                      <CardContent className="p-0">
                         <ProgressiveImage
                           src={item.imageUrl}
-                          alt={item.title}
-                          className="w-full h-full"
-                          imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
+                          alt={category}
+                          className="w-full aspect-video"
+                          imageClassName="transition-transform duration-300 group-hover:scale-103"
                           onLoad={handleImageLoad}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center p-4">
-                          <div className="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                            <h3 className="text-lg font-semibold">{item.title}</h3>
-                            {item.description && (
-                              <p className="text-sm mt-1">{item.description}</p>
-                            )}
-                            <p className="text-sm mt-1">Category: {item.category}</p>
-                          </div>
-                        </div>
                       </CardContent>
                     </Card>
                   </motion.div>
                 ))}
-              </motion.div>
-            ))}
-          </div>
-        </>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       )}
     </motion.div>
   );
