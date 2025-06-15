@@ -12,10 +12,31 @@ exports.getAllImages = async (req, res) => {
   }
 };
 
+// Get images by category
+exports.getImagesByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const images = await Gallery.find({ category }).sort({ createdAt: -1 });
+    res.status(200).json(images);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all categories
+exports.getAllCategories = async (req, res) => {
+  try {
+    const categories = await Gallery.distinct('category');
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Upload new image
 exports.uploadImage = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, category } = req.body;
     const file = req.file;
 
     if (!file) {
@@ -43,6 +64,7 @@ exports.uploadImage = async (req, res) => {
     const newImage = new Gallery({
       title,
       description,
+      category,
       imageUrl: result.secure_url,
       cloudinaryId: result.public_id
     });
@@ -59,11 +81,11 @@ exports.uploadImage = async (req, res) => {
 exports.updateImage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description } = req.body;
+    const { title, description, category } = req.body;
     
     const updatedImage = await Gallery.findByIdAndUpdate(
       id,
-      { title, description },
+      { title, description, category },
       { new: true }
     );
 

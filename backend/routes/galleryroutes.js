@@ -9,6 +9,8 @@ const upload = multer({ storage: storage });
 
 // Routes
 router.get('/gallery', galleryController.getAllImages);
+router.get('/gallery/categories', galleryController.getAllCategories);
+router.get('/gallery/category/:category', galleryController.getImagesByCategory);
 router.post('/gallery', upload.single('image'), galleryController.uploadImage);
 router.put('/gallery/:id', galleryController.updateImage);
 router.delete('/gallery/:id', galleryController.deleteImage);

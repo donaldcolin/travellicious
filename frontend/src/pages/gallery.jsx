@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 const SkeletonImage = ({ className }) => (
   <div className={`animate-pulse rounded-lg overflow-hidden ${className}`}>
@@ -40,74 +40,40 @@ const ProgressiveImage = ({ src, alt, className, imageClassName = "", onLoad }) 
 
 export const Gallery = () => {
   const [images, setImages] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   useEffect(() => {
-    const fetchAllImages = async () => {
+    const fetchData = async () => {
       try {
-        // Fetch from all three sources
-        const [productsResponse, outingsResponse, galleryResponse] = await Promise.all([
-          axios.get(`${API_BASE_URL}/allproducts`),
-          axios.get(`${API_BASE_URL}/allOutings`),
-          axios.get(`${API_BASE_URL}/gallery`)
-        ]);
+        // Fetch categories
+        const categoriesResponse = await axios.get(`${API_BASE_URL}/gallery/categories`);
+        setCategories(categoriesResponse.data);
+
+        // Fetch images based on selected category
+        const imagesResponse = selectedCategory === 'all'
+          ? await axios.get(`${API_BASE_URL}/gallery`)
+          : await axios.get(`${API_BASE_URL}/gallery/category/${selectedCategory}`);
         
-        // Format product images
-        const productImages = productsResponse.data.flatMap(product => 
-          product.images.map((image) => ({
-            image: image.startsWith('http') ? image : `${API_BASE_URL}${image}`,
-            id: product._id,
-            title: product.name,
-            description: product.description,
-            type: 'product',
-            sortKey: `product-${product._id}-${product.name}`
-          }))
-        );
-
-        // Format outing images
-        const outingImages = outingsResponse.data.flatMap(outing => 
-          outing.images.map((image) => ({
-            image: image.startsWith('http') ? image : `${API_BASE_URL}${image}`,
-            id: outing._id,
-            title: outing.name,
-            description: outing.description,
-            type: 'outing',
-            sortKey: `outing-${outing._id}-${outing.name}`
-          }))
-        );
-
-        // Format gallery images
-        const galleryImages = galleryResponse.data.map(image => ({
-          image: image.imageUrl,
-          id: image._id,
-          title: image.title,
-          description: image.description,
-          type: 'gallery',
-          sortKey: `gallery-${image._id}-${image.title}`
-        }));
-
-        // Combine all images and sort them by creation date
-        const allImages = [...productImages, ...outingImages, ...galleryImages]
-          .sort((a, b) => b.sortKey.localeCompare(a.sortKey));
-        
-        setImages(allImages);
+        setImages(imagesResponse.data);
         
         setTimeout(() => {
           setLoading(false);
         }, 300);
       } catch (err) {
-        console.error("Error fetching images:", err);
-        setError(err.response?.data?.message || err.message || "Failed to fetch images");
+        console.error("Error fetching data:", err);
+        setError(err.response?.data?.message || err.message || "Failed to fetch data");
         setLoading(false);
       }
     };
 
-    fetchAllImages();
-  }, []);
-  
+    fetchData();
+  }, [selectedCategory]);
+
   // Track progress of loaded images
   const handleImageLoad = () => {
     setImagesLoaded(prev => prev + 1);
@@ -185,6 +151,27 @@ export const Gallery = () => {
       >
         Our Gallery
       </motion.h1>
+
+      {/* Category Filter */}
+      <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <Button
+          variant={selectedCategory === 'all' ? 'default' : 'outline'}
+          onClick={() => setSelectedCategory('all')}
+          className="mb-2"
+        >
+          All
+        </Button>
+        {categories.map((category) => (
+          <Button
+            key={category}
+            variant={selectedCategory === category ? 'default' : 'outline'}
+            onClick={() => setSelectedCategory(category)}
+            className="mb-2"
+          >
+            {category}
+          </Button>
+        ))}
+      </div>
       
       {/* Loading progress indicator */}
       {!loading && images.length > 0 && imagesLoaded < images.length && (
@@ -200,14 +187,14 @@ export const Gallery = () => {
       )}
       
       {images.length === 0 && !loading ? (
-        <p className="text-center text-gray-500">No images found</p>
+        <p className="text-center text-gray-500">No images found in this category</p>
       ) : (
         <>
           {/* Mobile View - Single column layout */}
           <div className="md:hidden space-y-4">
             {images.map((item, index) => (
               <motion.div
-                key={item.sortKey}
+                key={item._id}
                 initial={{ y: 20, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
@@ -216,7 +203,7 @@ export const Gallery = () => {
                 <Card className="overflow-hidden border-0 hover:shadow-xl transition-all duration-300">
                   <CardContent className="p-0">
                     <ProgressiveImage
-                      src={item.image}
+                      src={item.imageUrl}
                       alt={item.title}
                       className="w-full aspect-video"
                       imageClassName="transition-transform duration-300 group-hover:scale-103"
@@ -227,6 +214,7 @@ export const Gallery = () => {
                       {item.description && (
                         <p className="text-gray-600 mt-2">{item.description}</p>
                       )}
+                      <p className="text-sm text-gray-500 mt-2">Category: {item.category}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -247,7 +235,7 @@ export const Gallery = () => {
               >
                 {section.map((item, index) => (
                   <motion.div
-                    key={item.sortKey}
+                    key={item._id}
                     initial={{ y: 20, opacity: 0 }}
                     whileInView={{ y: 0, opacity: 1 }}
                     viewport={{ once: true }}
@@ -257,7 +245,7 @@ export const Gallery = () => {
                     <Card className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300 border-0">
                       <CardContent className="p-0 h-full">
                         <ProgressiveImage
-                          src={item.image}
+                          src={item.imageUrl}
                           alt={item.title}
                           className="w-full h-full"
                           imageClassName="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -269,6 +257,7 @@ export const Gallery = () => {
                             {item.description && (
                               <p className="text-sm mt-1">{item.description}</p>
                             )}
+                            <p className="text-sm mt-1">Category: {item.category}</p>
                           </div>
                         </div>
                       </CardContent>
