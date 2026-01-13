@@ -30,7 +30,7 @@ const TrekCard = ({ trek }) => {
             alt={trek.name}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
-          
+
           {/* Gradient overlay that fades out on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-100 transition-opacity duration-300 group-hover:opacity-0" />
 
@@ -56,12 +56,12 @@ const TrekContent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  
+
   const fetchTreks = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/allproducts`);
+      const response = await axios.get(`${API_BASE_URL}/products`);
       setTreks(response.data);
       setLoading(false);
     } catch (error) {
@@ -89,8 +89,8 @@ const TrekContent = () => {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Failed to Load Treks</h2>
           <p className="text-gray-600 mb-6">Unable to fetch adventure details. Please check your connection.</p>
-          <Button 
-            onClick={fetchTreks} 
+          <Button
+            onClick={fetchTreks}
             className="flex items-center justify-center gap-2 mx-auto"
           >
             <RefreshCw className="w-4 h-4" />
@@ -107,8 +107,8 @@ const TrekContent = () => {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">No Treks Available</h2>
           <p className="text-gray-600 mb-6">We couldn't find any trek adventures at the moment.</p>
-          <Button 
-            onClick={fetchTreks} 
+          <Button
+            onClick={fetchTreks}
             className="flex items-center justify-center gap-2 mx-auto"
           >
             <RefreshCw className="w-4 h-4" />

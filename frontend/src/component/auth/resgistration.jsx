@@ -11,9 +11,9 @@ import { Eye, EyeOff } from 'lucide-react';
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { 
+  visible: {
     opacity: 1,
-    transition: { 
+    transition: {
       delay: 0.3,
       when: "beforeChildren",
       staggerChildren: 0.1
@@ -23,8 +23,8 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
-  visible: { 
-    y: 0, 
+  visible: {
+    y: 0,
     opacity: 1,
     transition: { type: 'spring', stiffness: 300, damping: 24 }
   }
@@ -62,13 +62,13 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    
+
     if (formData.password.length < 8) {
       setError('Password must be at least 8 characters long');
       return;
@@ -77,7 +77,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/register`, {
+      const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
       if (response.ok) {
         // Show success alert
         alert('Registration successful! You can now log in.');
-        
+
         // Pass user data to parent component if provided
         if (onRegistrationSuccess) {
           onRegistrationSuccess(data.user);
@@ -140,7 +140,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
                   </Alert>
                 </motion.div>
               )}
-              
+
               <motion.div className="space-y-2" variants={itemVariants}>
                 <Label htmlFor="name" className="text-gray-700">Full Name</Label>
                 <Input
@@ -154,7 +154,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
                   className="h-11 focus:ring-2 focus:ring-gray-500 transition-all duration-200"
                 />
               </motion.div>
-              
+
               <motion.div className="space-y-2" variants={itemVariants}>
                 <Label htmlFor="email" className="text-gray-700">Email</Label>
                 <Input
@@ -168,7 +168,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
                   className="h-11 focus:ring-2 focus:ring-gray-500 transition-all duration-200"
                 />
               </motion.div>
-              
+
               <motion.div className="space-y-2" variants={itemVariants}>
                 <Label htmlFor="password" className="text-gray-700">Password</Label>
                 <div className="relative">
@@ -195,7 +195,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
                   </button>
                 </div>
               </motion.div>
-              
+
               <motion.div className="space-y-2" variants={itemVariants}>
                 <Label htmlFor="confirmPassword" className="text-gray-700">Confirm Password</Label>
                 <div className="relative">
@@ -223,7 +223,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
                 </div>
               </motion.div>
             </CardContent>
-            
+
             <CardFooter className="flex flex-col space-y-4 pt-2 pb-6">
               <motion.div
                 variants={itemVariants}
@@ -231,8 +231,8 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
                 whileTap={{ scale: 0.98 }}
                 className="w-full"
               >
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full h-11 bg-black hover:bg-gray-800 text-white font-medium rounded-md transition-all duration-300"
                   disabled={isLoading}
                 >
@@ -248,7 +248,7 @@ const RegistrationPage = ({ onRegistrationSuccess }) => {
                   ) : 'Create Account'}
                 </Button>
               </motion.div>
-              
+
               <motion.div variants={itemVariants} className="text-center">
                 <p className="text-sm text-gray-500 mb-2">Already have an account?</p>
                 <Link to="/login" className="w-full block">

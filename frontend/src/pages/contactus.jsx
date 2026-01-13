@@ -66,7 +66,9 @@ const ContactUs = () => {
       // Simulate API call with timeout
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      const response = await fetch("/api/contact", {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+      const response = await fetch(`${API_BASE_URL}/contacts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -90,9 +92,9 @@ const ContactUs = () => {
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-1/3 h-64 bg-black/5 rounded-bl-full -z-10"></div>
       <div className="absolute bottom-20 left-0 w-64 h-64 bg-black/5 rounded-full -z-10"></div>
-      
+
       <div className="container mx-auto px-4">
-        <motion.div 
+        <motion.div
           initial="initial"
           animate="animate"
           variants={fadeIn}
@@ -110,7 +112,7 @@ const ContactUs = () => {
           </p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           variants={staggerContainer}
           initial="initial"
           animate="animate"
@@ -190,7 +192,7 @@ const ContactUs = () => {
                   </div>
 
                   {error && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="flex items-center gap-2 text-red-600 bg-red-50 p-4 rounded-md"
@@ -201,7 +203,7 @@ const ContactUs = () => {
                   )}
 
                   {message && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="flex items-center gap-2 text-green-600 bg-green-50 p-4 rounded-md"
@@ -211,8 +213,8 @@ const ContactUs = () => {
                     </motion.div>
                   )}
 
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full bg-black hover:bg-gray-800 text-white py-3 h-auto text-base"
                     disabled={loading}
                   >
@@ -243,7 +245,7 @@ const ContactUs = () => {
                       <p className="text-gray-600">Karnataka 560102, India</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="bg-black/5 p-3 rounded-full">
                       <Phone className="w-5 h-5 text-black" />
@@ -254,7 +256,7 @@ const ContactUs = () => {
                       <p className="text-gray-600">Mon-Fri from 9am to 6pm</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="bg-black/5 p-3 rounded-full">
                       <Mail className="w-5 h-5 text-black" />
@@ -265,7 +267,7 @@ const ContactUs = () => {
                       <p className="text-gray-600">support@travellicious.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="pt-4 border-t border-gray-100">
                     <p className="font-medium text-gray-900 mb-3">Connect With Us</p>
                     <div className="flex gap-4">
@@ -297,9 +299,9 @@ const ContactUs = () => {
             </div>
           </motion.div>
         </motion.div>
-        
+
         {/* FAQ or Getting Here Section */}
-        <motion.div 
+        <motion.div
           variants={fadeIn}
           initial="initial"
           whileInView="animate"
@@ -308,25 +310,25 @@ const ContactUs = () => {
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4"></div>
-          
+
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Visit Our Office</h2>
             <p className="text-gray-300 mb-8 max-w-3xl">
-              Want to discuss your adventure in person? Our office is located in the heart of HSR Layout, 
+              Want to discuss your adventure in person? Our office is located in the heart of HSR Layout,
               Bengaluru. We're easily accessible by public transport and have parking available for visitors.
             </p>
-            
+
             <div className="grid md:grid-cols-3 gap-8">
               <div>
                 <h3 className="text-xl font-medium mb-2">By Car</h3>
                 <p className="text-gray-300">Parking available at our building complex. Use the visitor's section.</p>
               </div>
-              
+
               <div>
                 <h3 className="text-xl font-medium mb-2">By Metro</h3>
                 <p className="text-gray-300">HSR Layout station is a 10-minute walk from our office.</p>
               </div>
-              
+
               <div>
                 <h3 className="text-xl font-medium mb-2">Office Hours</h3>
                 <p className="text-gray-300">Monday to Friday: 9am - 6pm<br />Saturday: 10am - 2pm</p>

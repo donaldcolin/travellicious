@@ -74,7 +74,7 @@ export const Footer = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
               {/* Products Section */}
               <div>
-               
+
                 <h3 className="mb-6 text-gray-500 text-sm">Products</h3>
                 <nav className="space-y-4">
                   {navigation.products.map((item) => (
@@ -89,9 +89,8 @@ export const Footer = () => {
                         {item.name}
                       </span>
                       <span
-                        className={`absolute left-0 bottom-0 w-full h-[1px] bg-white transform origin-left transition-transform duration-300 ${
-                          isHovered === item.name ? 'scale-x-100' : 'scale-x-0'
-                        }`}
+                        className={`absolute left-0 bottom-0 w-full h-[1px] bg-white transform origin-left transition-transform duration-300 ${isHovered === item.name ? 'scale-x-100' : 'scale-x-0'
+                          }`}
                       />
                     </a>
                   ))}
@@ -100,7 +99,7 @@ export const Footer = () => {
 
               {/* Company Section */}
               <div>
-             
+
                 <h3 className="mb-6 text-gray-500 text-sm">Company</h3>
                 <nav className="space-y-4">
                   {navigation.company.map((item) => (
@@ -115,9 +114,8 @@ export const Footer = () => {
                         {item.name}
                       </span>
                       <span
-                        className={`absolute left-0 bottom-0 w-full h-[1px] bg-white transform origin-left transition-transform duration-300 ${
-                          isHovered === item.name ? 'scale-x-100' : 'scale-x-0'
-                        }`}
+                        className={`absolute left-0 bottom-0 w-full h-[1px] bg-white transform origin-left transition-transform duration-300 ${isHovered === item.name ? 'scale-x-100' : 'scale-x-0'
+                          }`}
                       />
                     </a>
                   ))}
@@ -126,7 +124,7 @@ export const Footer = () => {
 
               {/* Support Section */}
               <div>
-    
+
                 <h3 className="mb-6 text-gray-500 text-sm">Support</h3>
                 <nav className="space-y-4">
                   {navigation.support.map((item) => (
@@ -141,9 +139,8 @@ export const Footer = () => {
                         {item.name}
                       </span>
                       <span
-                        className={`absolute left-0 bottom-0 w-full h-[1px] bg-white transform origin-left transition-transform duration-300 ${
-                          isHovered === item.name ? 'scale-x-100' : 'scale-x-0'
-                        }`}
+                        className={`absolute left-0 bottom-0 w-full h-[1px] bg-white transform origin-left transition-transform duration-300 ${isHovered === item.name ? 'scale-x-100' : 'scale-x-0'
+                          }`}
                       />
                     </a>
                   ))}
@@ -157,8 +154,8 @@ export const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-start pt-12 border-t border-gray-800">
           <div className="mb-8 md:mb-0">
             <h2 className="text-2xl font-light mb-4">Travellicious</h2>
-          
-             
+
+
             <div className="flex space-x-6">
               {navigation.social.map((item) => {
                 const Icon = item.icon;
@@ -176,17 +173,22 @@ export const Footer = () => {
               })}
             </div>
           </div>
-          
-          <div className="flex flex-wrap gap-8 text-sm text-gray-500">
-            {navigation.legal.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="hover:text-white transition-colors"
-              >
-                {item.name}
-              </a>
-            ))}
+
+          <div className="flex flex-col md:items-end gap-4">
+            <div className="flex flex-wrap gap-8 text-sm text-gray-500">
+              {navigation.legal.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="hover:text-white transition-colors"
+                >
+                  {item.name}
+                </a>
+              ))}
+            </div>
+            <p className="text-sm text-gray-500">
+              Made with <span className="text-gray-400">♥</span> by <a href="https://instagram.com/aldified" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Donald Colin</a>
+            </p>
           </div>
         </div>
       </div>

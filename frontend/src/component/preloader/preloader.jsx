@@ -1,25 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
-
 import { motion, AnimatePresence } from 'framer-motion';
-
-const rotation = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-const fadeOut = keyframes`
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-`;
+import styled from 'styled-components';
 
 const LoaderWrapper = styled(motion.div)`
   position: fixed;
@@ -30,185 +11,247 @@ const LoaderWrapper = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.9);
-  z-index: 1000;
+  background-color: #000;
+  z-index: 9999;
 `;
 
-const Loader = styled.div`
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  border-top: 3px solid #fff;
-  border-right: 3px solid transparent;
-  animation: ${rotation} 1s linear infinite;
+const LoaderContent = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 `;
 
-const BrandName = styled.div`
-  font-size: 2rem;
-  font-weight: bold;
-  color: #ddd;
-  margin-top: 1rem;
+const Logo = styled(motion.div)`
+  width: 120px;
+  height: 120px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 `;
 
-const LoadingText = styled.div`
-  color: #aaa;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
+const LoadingText = styled(motion.p)`
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: center;
+  max-width: 300px;
+`;
+
+const ProgressContainer = styled.div`
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 `;
 
 const ProgressBar = styled.div`
-  width: 200px;
-  height: 4px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
-  margin-top: 1rem;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
   overflow: hidden;
   position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
 `;
 
-const ProgressFill = styled.div`
+const Progress = styled(motion.div)`
   height: 100%;
-  background-color: #fff;
-  border-radius: 2px;
-  transition: width 0.3s ease;
-  width: ${props => props.width}%;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%
+    );
+    animation: shine 1.5s infinite;
+  }
+  
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
 `;
+
+const ProgressText = styled.span`
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+`;
+
+const loadingMessages = [
+  "Preparing your journey...",
+  "Packing your virtual suitcase...",
+  "Checking the weather...",
+  "Mapping your destinations...",
+  "Almost ready for takeoff...",
+  "Loading your travel memories...",
+  "Setting up your adventure...",
+  "Connecting to travel guides...",
+  "Preparing your itinerary...",
+  "Loading travel tips..."
+];
 
 const Preloader = () => {
-  const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [loadingMessage, setLoadingMessage] = useState("Preparing your journey...");
+  const [message, setMessage] = useState(loadingMessages[0]);
+  const [isVisible, setIsVisible] = useState(true);
+  const [heroImagesLoaded, setHeroImagesLoaded] = useState(false);
 
-  // Track loading progress
   useEffect(() => {
-    // Start with some progress to show activity
-    setProgress(10);
-    
-    // Array of loading messages to cycle through
-    const messages = [
-      "Preparing your journey...",
-      "Packing your virtual suitcase...",
-      "Checking the weather...",
-      "Mapping your destinations...",
-      "Almost ready for takeoff..."
-    ];
-    
-    // Change message every 2 seconds
+    let messageIndex = 0;
     const messageInterval = setInterval(() => {
-      setLoadingMessage(messages[Math.floor(Math.random() * messages.length)]);
+      messageIndex = (messageIndex + 1) % loadingMessages.length;
+      setMessage(loadingMessages[messageIndex]);
     }, 2000);
-    
-    // Simulate progress until window load completes
+
     const progressInterval = setInterval(() => {
       setProgress(prev => {
-        // Slowly increase up to 90% before window load completes
-        const increment = Math.random() * 5;
-        return Math.min(prev + increment, 90);
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        // Slower progress as we get closer to 100
+        const increment = Math.max(0.1, (100 - prev) * 0.1);
+        return Math.min(prev + increment, 100);
       });
-    }, 300);
-    
+    }, 50);
+
     // Listen for hero images loaded event
     const handleHeroImagesLoaded = () => {
-      clearInterval(progressInterval);
-      setProgress(100);
-      
-      // Delay hiding the preloader to ensure smooth transition
-      setTimeout(() => {
-        setLoading(false);
-      }, 500);
+      setHeroImagesLoaded(true);
     };
-    
+
     window.addEventListener('heroImagesLoaded', handleHeroImagesLoaded);
-    
-    // Fallback to standard window load if heroImagesLoaded event doesn't fire
-    const handleWindowLoad = () => {
-      if (document.readyState === 'complete' && progress < 100) {
-        // Only proceed if heroImagesLoaded hasn't fired yet
-        setProgress(95);
+
+    // Check if all critical resources are loaded
+    const checkResourcesLoaded = () => {
+      const images = Array.from(document.getElementsByTagName('img'));
+      const stylesheets = Array.from(document.getElementsByTagName('link'))
+        .filter(link => link.rel === 'stylesheet');
+      
+      const allResourcesLoaded = 
+        images.every(img => img.complete) &&
+        stylesheets.every(link => link.sheet !== null) &&
+        heroImagesLoaded;
+
+      if (allResourcesLoaded && progress >= 100) {
+        clearInterval(progressInterval);
+        clearInterval(messageInterval);
         
-        // Give a little more time for hero images to load
+        // Add a small delay before hiding
         setTimeout(() => {
-          if (progress < 100) {
-            clearInterval(progressInterval);
-            setProgress(100);
-            
-            setTimeout(() => {
-              setLoading(false);
-            }, 500);
-          }
-        }, 2000);
+          setIsVisible(false);
+        }, 500);
       }
     };
-    
-    // Check if page is already loaded
-    if (document.readyState === 'complete') {
-      handleWindowLoad();
-    } else {
-      window.addEventListener('load', handleWindowLoad);
-    }
-    
+
+    // Check resources periodically
+    const resourceCheckInterval = setInterval(checkResourcesLoaded, 100);
+
+    // Also check on window load
+    window.addEventListener('load', checkResourcesLoaded);
+
     return () => {
-      window.removeEventListener('heroImagesLoaded', handleHeroImagesLoaded);
-      window.removeEventListener('load', handleWindowLoad);
       clearInterval(messageInterval);
       clearInterval(progressInterval);
+      clearInterval(resourceCheckInterval);
+      window.removeEventListener('load', checkResourcesLoaded);
+      window.removeEventListener('heroImagesLoaded', handleHeroImagesLoaded);
     };
-  }, [progress]);
+  }, [progress, heroImagesLoaded]);
 
   return (
     <AnimatePresence>
-      {loading && (
+      {isVisible && (
         <LoaderWrapper
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="flex flex-col items-center gap-6">
-            <div className="relative">
-              {/* Main spinning loader */}
-              <Loader />
-              
-              {/* Centered plane icon */}
-              <motion.div 
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white"
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                  rotate: [0, 5, -5, 0]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
-              >
-         
-              </motion.div>
-            </div>
+          <LoaderContent>
+            <Logo
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            />
             
-            {/* Brand Name */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
+            <LoadingText
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <BrandName>
-                Travellicious
-              </BrandName>
-            </motion.div>
-            
-            {/* Loading progress */}
-            <motion.div 
-              className="flex flex-col items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
+              {message}
+            </LoadingText>
+
+            <ProgressContainer>
               <ProgressBar>
-                <ProgressFill width={progress} />
+                <Progress
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.3 }}
+                />
               </ProgressBar>
-              <LoadingText>{loadingMessage}</LoadingText>
-            </motion.div>
-          </div>
+              <ProgressText>{Math.round(progress)}%</ProgressText>
+            </ProgressContainer>
+          </LoaderContent>
         </LoaderWrapper>
       )}
     </AnimatePresence>

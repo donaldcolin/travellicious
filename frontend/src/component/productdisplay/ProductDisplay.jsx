@@ -51,7 +51,7 @@ export const ProductDisplay = ({ product }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/getreviews`);
+        const response = await fetch(`${API_BASE_URL}/reviews`);
         if (!response.ok) throw new Error('Failed to fetch reviews');
         const data = await response.json();
         setReviews(data.reviews || []);
@@ -62,7 +62,7 @@ export const ProductDisplay = ({ product }) => {
         setIsLoading(false);
       }
     };
-  
+
     fetchReviews();
   }, []);
 
@@ -154,7 +154,7 @@ export const ProductDisplay = ({ product }) => {
               <p className="text-gray-600 text-lg leading-relaxed">{product.description}</p>
             </motion.div>
 
-         
+
 
             {/* Commented out services and attractions section
             <div className="grid md:grid-cols-2 gap-12">
@@ -207,24 +207,24 @@ export const ProductDisplay = ({ product }) => {
               </motion.div>
             </div>
             */}
-                {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 {/* <div>
                   <p className="text-lg text-gray-600">Next available date</p>
                   <Suspense fallback={<div>Loading date...</div>}>
                     <DateFormatter date={product.nextdate} />
                   </Suspense>
                 </div> */}
-                <div>
-                  {/* <p className="text-lg text-gray-600">Price per person</p>
+            <div>
+              {/* <p className="text-lg text-gray-600">Price per person</p>
                   <p className="text-3xl font-bold">
                     ₹{typeof product.price === 'object' ? product.price.single : product.price}
                   </p> */}
-                </div> 
-              <div className="">
-                <Suspense fallback={<div>Loading contact sheet...</div>}>
-                  <ContactSideSheet />
-                </Suspense>
-              </div>
+            </div>
+            <div className="">
+              <Suspense fallback={<div>Loading contact sheet...</div>}>
+                <ContactSideSheet />
+              </Suspense>
+            </div>
           </div>
         </Section>
 

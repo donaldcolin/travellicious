@@ -44,7 +44,7 @@ const OutingCard = ({ outing, index }) => {
                 alt={outing.name}
                 className="absolute inset-0 w-full h-full object-cover"
               />
-              
+
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-100 transition-opacity duration-300 group-hover:opacity-60" />
 
@@ -72,12 +72,12 @@ const OutingContent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  
+
   const fetchOutings = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE_URL}/allOutings`);
+      const response = await axios.get(`${API_BASE_URL}/outings`);
       setOutings(response.data);
       setLoading(false);
     } catch (error) {
@@ -101,7 +101,7 @@ const OutingContent = () => {
 
   if (error) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -111,8 +111,8 @@ const OutingContent = () => {
           <h2 className="text-2xl font-bold text-red-600 mb-4">Failed to Load Outings</h2>
           <p className="text-gray-600 mb-6">Unable to fetch outing details. Please check your connection.</p>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button 
-              onClick={fetchOutings} 
+            <Button
+              onClick={fetchOutings}
               className="flex items-center justify-center gap-2 mx-auto"
             >
               <motion.div
@@ -142,8 +142,8 @@ const OutingContent = () => {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">No Outings Available</h2>
           <p className="text-gray-600 mb-6">We couldn't find any outings at the moment.</p>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button 
-              onClick={fetchOutings} 
+            <Button
+              onClick={fetchOutings}
               className="flex items-center justify-center gap-2 mx-auto"
             >
               <RefreshCw className="w-4 h-4" />
@@ -167,16 +167,16 @@ const OutingContent = () => {
 // Main Outings Component
 export const Outings = () => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      id="outings-section" 
+      id="outings-section"
       className="bg-gradient-to-b from-white to-gray-50 min-h-screen pt-24 pb-12"
     >
       <div className="container mx-auto px-4">
         {/* Static heading section with animation */}
-        <motion.div 
+        <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}

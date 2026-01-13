@@ -12,9 +12,9 @@ import { Eye, EyeOff } from 'lucide-react';
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { 
+  visible: {
     opacity: 1,
-    transition: { 
+    transition: {
       delay: 0.3,
       when: "beforeChildren",
       staggerChildren: 0.1
@@ -24,8 +24,8 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
-  visible: { 
-    y: 0, 
+  visible: {
+    y: 0,
     opacity: 1,
     transition: { type: 'spring', stiffness: 300, damping: 24 }
   }
@@ -41,39 +41,39 @@ const LoginPage = ({ onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  
+
   // Check if user is already logged in
   useEffect(() => {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (token) {
       // Validate token with the server
-      fetch(`${API_BASE_URL}/me`, {
+      fetch(`${API_BASE_URL}/users/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        // Clear invalid tokens
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('token');
-        return null;
-      })
-      .then(data => {
-        if (data && data.user) {
-          // Auto-login if we have a valid token
-          if (onLoginSuccess) {
-            onLoginSuccess(data.user, token);
-          } else {
-            window.location.href = '/dashboard';
+        .then(response => {
+          if (response.ok) {
+            return response.json();
           }
-        }
-      })
-      .catch(err => {
-        console.error('Auth check failed:', err);
-      });
+          // Clear invalid tokens
+          localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
+          return null;
+        })
+        .then(data => {
+          if (data && data.user) {
+            // Auto-login if we have a valid token
+            if (onLoginSuccess) {
+              onLoginSuccess(data.user, token);
+            } else {
+              window.location.href = '/dashboard';
+            }
+          }
+        })
+        .catch(err => {
+          console.error('Auth check failed:', err);
+        });
     }
   }, [onLoginSuccess]);
 
@@ -98,7 +98,7 @@ const LoginPage = ({ onLoginSuccess }) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,10 +118,10 @@ const LoginPage = ({ onLoginSuccess }) => {
         } else {
           sessionStorage.setItem('token', data.token);
         }
-        
+
         // Show success alert
         alert('Login successful!');
-        
+
         // Pass user data to parent component if provided
         if (onLoginSuccess) {
           onLoginSuccess(data.user, data.token);
@@ -171,7 +171,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                   </Alert>
                 </motion.div>
               )}
-              
+
               <motion.div className="space-y-2" variants={itemVariants}>
                 <Label htmlFor="email" className="text-gray-700">Email</Label>
                 <Input
@@ -185,7 +185,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                   className="h-11 focus:ring-2 focus:ring-gray-500 transition-all duration-200"
                 />
               </motion.div>
-              
+
               <motion.div className="space-y-2" variants={itemVariants}>
                 <Label htmlFor="password" className="text-gray-700">Password</Label>
                 <div className="relative">
@@ -212,12 +212,12 @@ const LoginPage = ({ onLoginSuccess }) => {
                   </button>
                 </div>
               </motion.div>
-              
-              <motion.div 
-                className="flex items-center space-x-2" 
+
+              <motion.div
+                className="flex items-center space-x-2"
                 variants={itemVariants}
               >
-                <Checkbox 
+                <Checkbox
                   id="remember"
                   checked={formData.remember}
                   onCheckedChange={handleCheckboxChange}
@@ -228,7 +228,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                 </Label>
               </motion.div>
             </CardContent>
-            
+
             <CardFooter className="flex flex-col space-y-5 pt-2 pb-6">
               <motion.div
                 variants={itemVariants}
@@ -236,8 +236,8 @@ const LoginPage = ({ onLoginSuccess }) => {
                 whileTap={{ scale: 0.98 }}
                 className="w-full"
               >
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full h-11 bg-black hover:bg-gray-800 text-white font-medium rounded-md transition-all duration-300"
                   disabled={isLoading}
                 >
@@ -253,7 +253,7 @@ const LoginPage = ({ onLoginSuccess }) => {
                   ) : 'Sign in'}
                 </Button>
               </motion.div>
-              
+
               <motion.div variants={itemVariants} className="text-center">
                 <p className="text-sm text-gray-500 mb-2">Don't have an account?</p>
                 <Link to="/register" className="w-full block">

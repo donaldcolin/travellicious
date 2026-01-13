@@ -13,10 +13,22 @@ export default defineConfig({
   server: {
     port: 3000, // Same as CRA default
     open: true,
+    headers: {
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
   },
   build: {
-    outDir: 'build', // Same as CRA default
+    outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          // Add other large dependencies here
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
   },
   // Handle static files like CRA
   publicDir: 'public',

@@ -14,16 +14,16 @@ export const ProductPage = () => {
     const fetchProduct = async () => {
       try {
         // Modify the URL to match your exact backend endpoint
-        const response = await axios.get(`${API_BASE_URL}/allproducts/${productId}`);
-        
+        const response = await axios.get(`${API_BASE_URL}/products/${productId}`);
+
         // Log the response to understand the data structure
         console.log('Product Data:', response.data);
-       
+
         setProduct(response.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching product:', error);
-        
+
         // More detailed error handling
         if (error.response) {
           // The request was made and the server responded with a status code
@@ -45,7 +45,7 @@ export const ProductPage = () => {
             status: null
           });
         }
-        
+
         setLoading(false);
       }
     };
@@ -72,7 +72,7 @@ export const ProductPage = () => {
         <h2 className="text-2xl font-bold text-red-600 mb-4">Error Fetching Product</h2>
         <p className="text-gray-700 mb-2">Status: {error.status || 'Unknown'}</p>
         <p className="text-gray-600">{error.message}</p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
@@ -95,7 +95,7 @@ export const ProductPage = () => {
   return (
     <div>
       <ProductDisplay product={product} />
-   
+
     </div>
   );
 };

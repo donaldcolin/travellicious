@@ -13,13 +13,13 @@ export const OutingPage = () => {
   useEffect(() => {
     const fetchOuting = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/allOutings/${outingId}`);
+        const response = await axios.get(`${API_BASE_URL}/outings/${outingId}`);
         console.log('Outing Data:', response.data);
         setOuting(response.data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching outing:', error);
-        
+
         if (error.response) {
           setError({
             message: error.response.data.message || 'Failed to fetch outing',
@@ -59,7 +59,7 @@ export const OutingPage = () => {
         <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Outing</h2>
         <p className="text-green-700 mb-2">Status: {error.status || 'Unknown'}</p>
         <p className="text-blue-600">{error.message}</p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >

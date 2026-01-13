@@ -18,7 +18,6 @@ export const Hero = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [loadingError, setLoadingError] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(0);
 
   // Preload images with better error handling and timeout
   useEffect(() => {
@@ -44,7 +43,6 @@ export const Hero = () => {
         
         img.onload = () => {
           loadedCount++;
-          setLoadingProgress(Math.floor((loadedCount / totalImages) * 100));
           resolve();
         };
         
@@ -70,8 +68,6 @@ export const Hero = () => {
         // Dispatch custom event to notify the preloader that hero images are loaded
         const heroLoadedEvent = new Event('heroImagesLoaded');
         window.dispatchEvent(heroLoadedEvent);
-        
-        console.log('Hero images loaded, event dispatched');
       })
       .catch(err => {
         console.error("Failed to preload images", err);
@@ -121,7 +117,6 @@ export const Hero = () => {
               transition={{ 
                 duration: 1.5, 
                 ease: "easeInOut",
-                // Increase crossfade overlap
                 exit: { duration: 1.5 } 
               }}
               className="absolute inset-0 bg-cover bg-center"
@@ -129,7 +124,6 @@ export const Hero = () => {
                 backgroundImage: loadingError 
                   ? `url(${fallbackImage})` 
                   : `url(${images[currentImageIndex]})`,
-                // This ensures an image is always visible during transitions
                 zIndex: currentImageIndex 
               }}
               role="img"
@@ -139,21 +133,13 @@ export const Hero = () => {
         </div>
       )}
 
-      {/* Loading indicator - shown when images are not loaded yet */}
-      {!imagesLoaded && (
-        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center bg-gray-900">
-          <div className="w-12 h-12 border-4 border-t-white border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-          <div className="mt-4 text-white">{loadingProgress}% loaded</div>
-        </div>
-      )}
-
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/40 z-10" />
 
       {/* Social Icons */}
       <div className="absolute bottom-4 md:bottom-6 right-4 md:right-6 flex gap-4 z-20">
         <a 
-          href="https://www.instagram.com/aldified" 
+          href="https://www.instagram.com/" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-white hover:text-white-400 transition-colors duration-300"
