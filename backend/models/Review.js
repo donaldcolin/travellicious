@@ -6,4 +6,4 @@ const reviewschema = new mongoose.Schema({
     rating: {type:Number},
 
 })
-  module.exports = mongoose.model("Review", reviewschema);
+  module.exports = mongoose.models.Review || mongoose.model("Review", reviewschema);
