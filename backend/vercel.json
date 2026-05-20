@@ -36,7 +36,7 @@
             "destination": "/api/gallery/[...path]"
         },
         {
-            "source": "/(.*)",
+            "source": "/",
             "destination": "/api"
         }
     ],

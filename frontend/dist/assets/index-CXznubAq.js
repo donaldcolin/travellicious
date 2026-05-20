@@ -1,0 +1,2 @@
+import{b as n,j as p}from"./vendor-BPdbrf5m.js";import{S as f}from"./index-BzkW4Ps2.js";import{j as u}from"./index-DZyqTsT1.js";var d=["a","button","div","form","h2","h3","img","input","label","li","nav","ol","p","span","svg","ul"],x=d.reduce((r,i)=>{const t=n.forwardRef((o,s)=>{const{asChild:e,...a}=o,m=e?f:i;return typeof window<"u"&&(window[Symbol.for("radix-ui")]=!0),u.jsx(m,{...a,ref:s})});return t.displayName=`Primitive.${i}`,{...r,[i]:t}},{});function h(r,i){r&&p.flushSync(()=>r.dispatchEvent(i))}export{x as P,h as d};
+//# sourceMappingURL=index-CXznubAq.js.map
