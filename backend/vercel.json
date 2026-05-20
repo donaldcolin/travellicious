@@ -1,5 +1,11 @@
 {
     "version": 2,
+    "builds": [
+        {
+            "src": "api/**/*.js",
+            "use": "@vercel/node"
+        }
+    ],
     "rewrites": [
         {
             "source": "/api/products/:id",
@@ -28,6 +34,10 @@
         {
             "source": "/api/gallery",
             "destination": "/api/gallery/[...path]"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/api"
         }
     ],
     "headers": [
